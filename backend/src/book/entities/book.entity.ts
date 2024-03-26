@@ -1,4 +1,11 @@
-import {AfterUpdate, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn} from 'typeorm'
+import {
+  AfterUpdate,
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm'
 
 @Entity('book')
 export class BookEntity {
@@ -26,20 +33,20 @@ export class BookEntity {
   @Column('boolean', { default: false })
   isBorrowed: boolean
 
-  @Column( { nullable: true })
+  @Column({ nullable: true })
   borrower?: number
 
   @Column('simple-array')
   borrowersQueue: number[]
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt: Date
 
   @UpdateDateColumn()
   updatedAt: Date
 
   @AfterUpdate()
-  checkIsBorrowed(){
-    this.borrower ? this.isBorrowed = true : false
+  checkIsBorrowed() {
+    this.borrower ? (this.isBorrowed = true) : false
   }
 }
