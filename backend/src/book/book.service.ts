@@ -16,12 +16,15 @@ export class BookService {
   ) {}
   async create(payload: CreateBookDto): Promise<number> {
     const ownerId = ownerMockId
-    // payload.owner = ownerId
 
     const newBook = new BookEntity()
     Object.assign(newBook, { ...payload, owner: ownerId })
 
     const book = await this.bookRepository.save(newBook)
     return book.id
+  }
+
+  async getAll(): Promise<BookEntity[]> {
+    return await this.bookRepository.find()
   }
 }
