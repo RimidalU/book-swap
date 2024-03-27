@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
+import { IsEmpty } from 'class-validator'
 
 @Entity('book')
 export class BookEntity {
@@ -18,9 +19,11 @@ export class BookEntity {
   @Column()
   author: string
 
+  @IsEmpty()
   @Column('int2', { nullable: true })
   year?: number
 
+  @IsEmpty()
   @Column('text', { nullable: true })
   description?: string
 
@@ -33,6 +36,7 @@ export class BookEntity {
   @Column('boolean', { default: false })
   isBorrowed: boolean
 
+  @IsEmpty()
   @Column({ nullable: true })
   borrower?: number
 
