@@ -41,7 +41,7 @@ export class BookEntity {
   borrower?: number
 
   @IsEmpty()
-  @Column('int', { array: true })
+  @Column('int', { array: true, default: [] })
   borrowersQueue?: number[]
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
