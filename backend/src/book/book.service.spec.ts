@@ -5,6 +5,7 @@ import { Repository } from 'typeorm'
 import { BookService } from './book.service'
 
 import { BookEntity } from './entities'
+import { bookItem, ownerMockId } from './mocks'
 
 describe('BookService', () => {
   let service: BookService
@@ -18,13 +19,15 @@ describe('BookService', () => {
         BookService,
         {
           provide: BOOK_REPOSITORY_TOKEN,
-          useValue: {},
+          useValue: {
+            save: jest.fn().mockReturnValue(bookItem),
+          },
         },
       ],
     }).compile()
 
-    service = module.get<BookService>(BookService)
-    bookRepository = module.get<Repository<BookEntity>>(BOOK_REPOSITORY_TOKEN)
+    service = module.get(BookService)
+    bookRepository = module.get(BOOK_REPOSITORY_TOKEN)
   })
 
   it('should be defined', () => {
@@ -33,5 +36,23 @@ describe('BookService', () => {
 
   it('should bookRepository be defined', () => {
     expect(bookRepository).toBeDefined()
+  })
+
+  describe('create book method', () => {
+    const createItemInfo = {
+      name: bookItem.name,
+      author: bookItem.author,
+      condition: bookItem.condition,
+      year: bookItem.year,
+      description: bookItem.description,
+    }
+
+    it('check the book created', async () => {
+      expect(await service.create(createItemInfo)).toBe(bookItem.id)
+      expect(bookRepository.save).toHaveBeenCalledWith({
+        ...createItemInfo,
+        owner: ownerMockId,
+      })
+    })
   })
 })
