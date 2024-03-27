@@ -15,3 +15,11 @@ export const bookItem: UserType = {
   updatedAt: new Date(),
 }
 export const ownerMockId = 123
+
+export const newItemInfo = {
+  name: bookItem.name,
+  author: bookItem.author,
+  condition: bookItem.condition,
+  year: bookItem.year,
+  description: bookItem.description,
+}
