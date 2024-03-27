@@ -5,6 +5,7 @@ import { Repository } from 'typeorm'
 import { BookService } from './book.service'
 
 import { BookEntity } from './entities'
+
 import { bookItem, newItemInfo, ownerMockId } from './mocks'
 
 describe('BookService', () => {

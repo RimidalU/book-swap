@@ -1,6 +1,7 @@
 import { plainToInstance } from 'class-transformer'
-import { CreateBookDto } from './create-book.dto'
 import { validate } from 'class-validator'
+
+import { CreateBookDto } from '@src/book/dto/create-book.dto'
 
 describe('create-book.dto', () => {
   let dto

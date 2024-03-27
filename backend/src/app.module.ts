@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 
-import { DatabaseModule } from './database'
-import { BookModule } from './book'
-import { EnvModule } from './env'
+import { DatabaseModule } from '@src/database'
+import { BookModule } from '@src/book'
+import { EnvModule } from '@src/env'
 
-import { AppController } from './app.controller'
-import { AppService } from './app.service'
+import { AppController } from '@src/app.controller'
+import { AppService } from '@src/app.service'
 
-import { envSchema } from './env'
+import { envSchema } from '@src/env'
 
 @Module({
   imports: [

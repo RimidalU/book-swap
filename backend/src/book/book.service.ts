@@ -3,9 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm'
 
 import { Repository } from 'typeorm'
 
-import { BookEntity } from './entities'
-import { ownerMockId } from './mocks'
-import { CreateBookDto } from './dto'
+import { BookEntity } from '@src/book/entities'
+import { CreateBookDto } from '@src/book/dto'
+
+import { ownerMockId } from '@src/book/mocks'
 
 @Injectable()
 export class BookService {
