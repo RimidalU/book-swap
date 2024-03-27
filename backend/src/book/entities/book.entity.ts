@@ -40,7 +40,8 @@ export class BookEntity {
   @Column({ nullable: true })
   borrower?: number
 
-  @Column('simple-array')
+  @IsEmpty()
+  @Column('simple-array', { default: [] })
   borrowersQueue: number[]
 
   @CreateDateColumn()
