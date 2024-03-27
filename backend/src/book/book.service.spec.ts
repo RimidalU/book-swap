@@ -22,6 +22,7 @@ describe('BookService', () => {
           provide: BOOK_REPOSITORY_TOKEN,
           useValue: {
             save: jest.fn().mockReturnValue(bookItem),
+            find: jest.fn().mockReturnValue([bookItem]),
           },
         },
       ],
@@ -46,6 +47,20 @@ describe('BookService', () => {
         ...newItemInfo,
         owner: ownerMockId,
       })
+    })
+  })
+
+  describe('getAll books method', () => {
+    it('the array of books should be returned', async () => {
+      expect(await service.getAll()).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            ...bookItem,
+          }),
+        ]),
+      )
+
+      expect(bookRepository.find).toHaveBeenCalledWith()
     })
   })
 })
