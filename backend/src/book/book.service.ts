@@ -5,6 +5,7 @@ import { Repository } from 'typeorm'
 
 import { BookEntity } from './entities'
 import { ownerMockId } from './mocks'
+import { CreateBookDto } from './dto'
 
 @Injectable()
 export class BookService {
@@ -12,12 +13,12 @@ export class BookService {
     @InjectRepository(BookEntity)
     private readonly bookRepository: Repository<BookEntity>,
   ) {}
-  async create(payload: any): Promise<number> {
+  async create(payload: CreateBookDto): Promise<number> {
     const ownerId = ownerMockId
-    payload.owner = ownerId
+    // payload.owner = ownerId
 
     const newBook = new BookEntity()
-    Object.assign(newBook, payload)
+    Object.assign(newBook, { ...payload, owner: ownerId })
 
     const book = await this.bookRepository.save(newBook)
     return book.id
