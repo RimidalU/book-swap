@@ -14,4 +14,5 @@ export default new DataSource(  {
   host:  process.env.TYPEORM_HOST,
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
   migrations: [__dirname + 'src/database/migrations/**/*{.ts,js}'],
+  useUTC: true
 })
