@@ -1,4 +1,4 @@
-import {BookType} from '@src/book/types/book.type'
+import { BookType } from '@src/book/types/book.type'
 
 export const bookItem: BookType = {
   id: 12,

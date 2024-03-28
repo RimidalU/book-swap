@@ -6,11 +6,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt'
 
 import { IsEmail, IsEmpty } from 'class-validator'
 
-const saltOrRounds = 10;
+const saltOrRounds = 10
 
 @Entity('user')
 export class UserEntity {
@@ -46,7 +46,7 @@ export class UserEntity {
   updatedAt: Date
 
   @BeforeInsert()
-  async hashPassword(){
-    this.password = await bcrypt.hash(this.password, saltOrRounds);
+  async hashPassword() {
+    this.password = await bcrypt.hash(this.password, saltOrRounds)
   }
 }

@@ -1,4 +1,4 @@
-import {UserType} from "@src/user/types";
+import { UserType } from '@src/user/types'
 
 export const userItem: UserType = {
   id: 11,
