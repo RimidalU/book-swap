@@ -5,12 +5,13 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
 } from '@nestjs/common'
 
 import { BookService } from '@src/book/book.service'
 
-import { CreateBookDto } from '@src/book/dto'
+import { CreateBookDto, UpdateBookDto } from '@src/book/dto'
 import { BookEntity } from '@src/book/entities'
 
 @Controller('book')
@@ -34,7 +35,14 @@ export class BookController {
 
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number): Promise<number> {
-    console.log(await this.bookService.remove(id))
     return await this.bookService.remove(id)
+  }
+
+  @Patch(':id')
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() payload: UpdateBookDto,
+  ): Promise<number> {
+    return await this.bookService.update(id, payload)
   }
 }
