@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config'
 
 import { DatabaseModule } from '@src/database'
 import { BookModule } from '@src/book'
+import { UserModule } from '@src/user'
 import { EnvModule } from '@src/env'
 
 import { AppController } from '@src/app.controller'
@@ -20,6 +21,7 @@ import { envSchema } from '@src/env'
     EnvModule,
     DatabaseModule,
     BookModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
