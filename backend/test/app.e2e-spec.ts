@@ -145,6 +145,26 @@ describe('AppController (e2e)', () => {
         .expect(400)
     })
 
+    it('PATCH - 200', () => {
+      return request(app.getHttpServer())
+        .patch(`/book/${bookId}`)
+        .expect(200)
+        .then((resp) => {
+          bookId = +resp.text
+        })
+    })
+
+    it('PATCH - 404', () => {
+      return request(app.getHttpServer()).patch(`/book/${wrongId}`).expect(404)
+    })
+
+    it('PATCH - 400', () => {
+      const wrongStringId = 'wrongStringId'
+      return request(app.getHttpServer())
+        .patch(`/book/${wrongStringId}`)
+        .expect(400)
+    })
+
     it('DELETE - 200', () => {
       return request(app.getHttpServer())
         .delete(`/book/${bookId}`)
