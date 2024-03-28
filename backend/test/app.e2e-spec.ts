@@ -108,5 +108,29 @@ describe('AppController (e2e)', () => {
           expect(arr[0].name).toBe(bookItem.name)
         })
     })
+
+    it('GET - 200', async () => {
+      return await request(app.getHttpServer())
+        .get('/book/')
+        .expect(200)
+        .then((resp) => {
+          const arr: BookEntity[] = JSON.parse(resp.text)
+          expect(arr[0].id).toBe(bookId)
+          expect(arr[0].name).toBe(bookItem.name)
+        })
+    })
+  })
+
+  describe('/book/:id', () => {
+    it('GET - 200', () => {
+      return request(app.getHttpServer())
+        .get(`/book/${bookId}`)
+        .expect(200)
+        .then((resp) => {
+          const bookItem: BookEntity = JSON.parse(resp.text)
+          expect(bookItem.id).toBe(bookId)
+          expect(bookItem.name).toBe(bookItem.name)
+        })
+    })
   })
 })
