@@ -1,6 +1,6 @@
-import { UserType } from '@src/book/types/book.type'
+import {BookType} from '@src/book/types/book.type'
 
-export const bookItem: UserType = {
+export const bookItem: BookType = {
   id: 12,
   name: 'Book Name',
   author: 'Book Author',

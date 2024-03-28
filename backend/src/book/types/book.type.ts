@@ -1,3 +1,3 @@
 import { BookEntity } from '@src/book/entities'
 
-export type UserType = Omit<BookEntity, 'checkIsBorrowed'>
+export type BookType = Omit<BookEntity, 'checkIsBorrowed'>
