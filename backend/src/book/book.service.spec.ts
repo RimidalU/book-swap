@@ -12,6 +12,10 @@ import { BookNotFoundException } from './exceptions'
 describe('BookService', () => {
   let service: BookService
   let bookRepository: Repository<BookEntity>
+  const newBookInfo = {
+    description: 'New description',
+    year: 1990,
+  }
 
   const BOOK_REPOSITORY_TOKEN = getRepositoryToken(BookEntity)
 
@@ -26,6 +30,10 @@ describe('BookService', () => {
             find: jest.fn().mockReturnValue([bookItem]),
             findOneBy: jest.fn().mockReturnValue(bookItem),
             remove: jest.fn().mockReturnValue(bookItem),
+            update: jest.fn().mockReturnValue({
+              ...bookItem,
+              ...newBookInfo,
+            }),
           },
         },
       ],
@@ -101,6 +109,31 @@ describe('BookService', () => {
       await expect(service.remove(bookItem.id)).rejects.toThrowError(
         BookNotFoundException,
       )
+    })
+  })
+
+  describe('update method', () => {
+    it('update the book with correct id should be returned book id', async () => {
+      expect(await service.update(bookItem.id, newBookInfo)).toEqual(
+        bookItem.id,
+      )
+
+      expect(await bookRepository.findOneBy).toHaveBeenCalledWith({
+        id: bookItem.id,
+      })
+
+      expect(bookRepository.save).toHaveBeenCalledWith({
+        ...bookItem,
+        ...newBookInfo,
+      })
+    })
+
+    it('update book with wrong id should throw an exception', async () => {
+      bookRepository.findOneBy = jest.fn().mockReturnValue(undefined)
+
+      await expect(
+        service.update(bookItem.id, newBookInfo),
+      ).rejects.toThrowError(BookNotFoundException)
     })
   })
 })
