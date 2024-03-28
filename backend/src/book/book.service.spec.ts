@@ -25,6 +25,7 @@ describe('BookService', () => {
             save: jest.fn().mockReturnValue(bookItem),
             find: jest.fn().mockReturnValue([bookItem]),
             findOneBy: jest.fn().mockReturnValue(bookItem),
+            remove: jest.fn().mockReturnValue(bookItem),
           },
         },
       ],
@@ -79,6 +80,25 @@ describe('BookService', () => {
       bookRepository.findOneBy = jest.fn().mockReturnValue(undefined)
 
       await expect(service.getById(bookItem.id)).rejects.toThrowError(
+        BookNotFoundException,
+      )
+    })
+  })
+
+  describe('remove method', () => {
+    it('remove the book with correct id should be returned book id', async () => {
+      expect(await service.remove(bookItem.id)).toEqual(bookItem.id)
+
+      expect(await bookRepository.findOneBy).toHaveBeenCalledWith({
+        id: bookItem.id,
+      })
+      expect(bookRepository.remove).toHaveBeenCalledWith(bookItem)
+    })
+
+    it('remove book with wrong id should throw an exception', async () => {
+      bookRepository.findOneBy = jest.fn().mockReturnValue(undefined)
+
+      await expect(service.remove(bookItem.id)).rejects.toThrowError(
         BookNotFoundException,
       )
     })
