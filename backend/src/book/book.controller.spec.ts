@@ -19,6 +19,7 @@ describe('BookController', () => {
             create: jest.fn().mockReturnValue(bookItem.id),
             getAll: jest.fn().mockReturnValue([bookItem]),
             getById: jest.fn().mockReturnValue(bookItem),
+            remove: jest.fn().mockReturnValue(bookItem.id),
           },
         },
       ],
@@ -59,6 +60,14 @@ describe('BookController', () => {
       expect(await controller.getById(bookItem.id)).toEqual(bookItem)
 
       expect(service.getById).toHaveBeenCalledWith(bookItem.id)
+    })
+  })
+
+  describe('remove book method', () => {
+    it('check returned book id', async () => {
+      expect(await controller.remove(bookItem.id)).toEqual(bookItem.id)
+
+      expect(service.remove).toHaveBeenCalledWith(bookItem.id)
     })
   })
 })
