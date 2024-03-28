@@ -7,6 +7,7 @@ import { BookEntity } from '@src/book/entities'
 import { CreateBookDto } from '@src/book/dto'
 
 import { ownerMockId } from '@src/book/mocks'
+import { BookNotFoundException } from '@src/book/exceptions'
 
 @Injectable()
 export class BookService {
@@ -26,5 +27,13 @@ export class BookService {
 
   async getAll(): Promise<BookEntity[]> {
     return await this.bookRepository.find()
+  }
+
+  async getById(id: number): Promise<BookEntity> {
+    const book = await this.bookRepository.findOneBy({ id })
+    if (!book) {
+      throw new BookNotFoundException(id)
+    }
+    return book
   }
 }

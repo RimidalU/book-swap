@@ -66,19 +66,19 @@ describe('BookService', () => {
     })
   })
 
-  describe('getOne method', () => {
+  describe('getById method', () => {
     it('the book with correct id should be returned', async () => {
-      expect(await service.getOne(bookItem.id)).toEqual(bookItem)
+      expect(await service.getById(bookItem.id)).toEqual(bookItem)
 
       expect(bookRepository.findOneBy).toHaveBeenCalledWith({
         id: bookItem.id,
       })
     })
 
-    it('getOne book with wrong id should throw an exception', async () => {
+    it('getById book with wrong id should throw an exception', async () => {
       bookRepository.findOneBy = jest.fn().mockReturnValue(undefined)
 
-      await expect(service.getOne(bookItem.id)).rejects.toThrowError(
+      await expect(service.getById(bookItem.id)).rejects.toThrowError(
         BookNotFoundException,
       )
     })
