@@ -13,6 +13,7 @@ describe('AppController (e2e)', () => {
   let app: INestApplication
   let bookId: number
   let dataSource: DataSource
+  const wrongId = 100500
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -131,6 +132,15 @@ describe('AppController (e2e)', () => {
           expect(bookItem.id).toBe(bookId)
           expect(bookItem.name).toBe(bookItem.name)
         })
+    })
+
+    it('GET - 404', () => {
+      return request(app.getHttpServer()).get(`/book/${wrongId}`).expect(404)
+    })
+
+    it('GET - 400', () => {
+      const wrongStringId = 'wrongStringId'
+      return request(app.getHttpServer()).get(`/book/${wrongStringId}`).expect(400)
     })
   })
 })
