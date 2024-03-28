@@ -8,6 +8,10 @@ import { bookItem, newItemInfo } from './mocks'
 describe('BookController', () => {
   let controller: BookController
   let service: BookService
+  const newBookInfo = {
+    description: 'New description',
+    year: 1990,
+  }
 
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
@@ -20,6 +24,7 @@ describe('BookController', () => {
             getAll: jest.fn().mockReturnValue([bookItem]),
             getById: jest.fn().mockReturnValue(bookItem),
             remove: jest.fn().mockReturnValue(bookItem.id),
+            update: jest.fn().mockReturnValue(bookItem.id),
           },
         },
       ],
@@ -68,6 +73,16 @@ describe('BookController', () => {
       expect(await controller.remove(bookItem.id)).toEqual(bookItem.id)
 
       expect(service.remove).toHaveBeenCalledWith(bookItem.id)
+    })
+  })
+
+  describe('update book method', () => {
+    it('check returned updated book with current id', async () => {
+      expect(await controller.update(bookItem.id, newBookInfo)).toEqual(
+        bookItem.id,
+      )
+
+      expect(service.update).toHaveBeenCalledWith(bookItem.id, newBookInfo)
     })
   })
 })
