@@ -30,10 +30,6 @@ describe('BookService', () => {
             find: jest.fn().mockReturnValue([bookItem]),
             findOneBy: jest.fn().mockReturnValue(bookItem),
             remove: jest.fn().mockReturnValue(bookItem),
-            update: jest.fn().mockReturnValue({
-              ...bookItem,
-              ...newBookInfo,
-            }),
           },
         },
       ],
