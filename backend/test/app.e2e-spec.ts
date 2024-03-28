@@ -33,7 +33,6 @@ describe('AppController (e2e)', () => {
             entities: [__dirname + '../**/*.entity{.ts,.js}'],
             migrations: [__dirname + '../migrations/**/*{.ts,js}'],
             synchronize: true,
-            logging: true,
             useUTC: true,
             autoLoadEntities: true,
           }),
