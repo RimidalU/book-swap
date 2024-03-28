@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 
 import { BookEntity } from '@src/book/entities'
-import { CreateBookDto } from '@src/book/dto'
+import { CreateBookDto, UpdateBookDto } from '@src/book/dto'
 
 import { ownerMockId } from '@src/book/mocks'
 import { BookNotFoundException } from '@src/book/exceptions'
@@ -42,5 +42,13 @@ export class BookService {
     const entity = await this.getById(id)
     const book = await this.bookRepository.remove(entity)
     return book.id
+  }
+
+  async update(id: number, payload: UpdateBookDto): Promise<number> {
+    const entity = await this.getById(id)
+    Object.assign(entity, payload)
+
+    await this.bookRepository.save(entity)
+    return entity.id
   }
 }
