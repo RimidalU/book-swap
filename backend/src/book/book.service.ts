@@ -15,6 +15,7 @@ export class BookService {
     @InjectRepository(BookEntity)
     private readonly bookRepository: Repository<BookEntity>,
   ) {}
+
   async create(payload: CreateBookDto): Promise<number> {
     const ownerId = ownerMockId
 
@@ -35,5 +36,11 @@ export class BookService {
       throw new BookNotFoundException(id)
     }
     return book
+  }
+
+  async remove(id: number): Promise<number> {
+    const entity = await this.getById(id)
+    const book = await this.bookRepository.remove(entity)
+    return book.id
   }
 }
