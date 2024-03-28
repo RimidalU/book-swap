@@ -140,7 +140,29 @@ describe('AppController (e2e)', () => {
 
     it('GET - 400', () => {
       const wrongStringId = 'wrongStringId'
-      return request(app.getHttpServer()).get(`/book/${wrongStringId}`).expect(400)
+      return request(app.getHttpServer())
+        .get(`/book/${wrongStringId}`)
+        .expect(400)
+    })
+
+    it('DELETE - 200', () => {
+      return request(app.getHttpServer())
+        .delete(`/book/${bookId}`)
+        .expect(200)
+        .then((resp) => {
+          bookId = +resp.text
+        })
+    })
+
+    it('DELETE - 404', () => {
+      return request(app.getHttpServer()).delete(`/book/${wrongId}`).expect(404)
+    })
+
+    it('DELETE - 400', () => {
+      const wrongStringId = 'wrongStringId'
+      return request(app.getHttpServer())
+        .delete(`/book/${wrongStringId}`)
+        .expect(400)
     })
   })
 })
