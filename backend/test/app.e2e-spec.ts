@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { INestApplication } from '@nestjs/common'
+import { INestApplication, ValidationPipe } from '@nestjs/common'
 import * as request from 'supertest'
 
 import { AppModule } from '@src/app.module'
@@ -41,6 +41,13 @@ describe('AppController (e2e)', () => {
     }).compile()
 
     app = moduleFixture.createNestApplication()
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    )
     await app.init()
 
     dataSource = app.get(DataSource)
@@ -75,12 +82,23 @@ describe('AppController (e2e)', () => {
         .expect(201)
         .then((resp) => {
           bookId = +resp.text
-          console.log(bookId)
         })
     })
 
+    it('POST - 400', () => {
+      return request(app.getHttpServer())
+        .post('/book')
+        .send({
+          name: bookItem.name,
+          author: bookItem.author,
+          condition: bookItem.condition,
+          year: bookItem.year,
+          wrongField: 'wrongValue',
+        })
+        .expect(400)
+    })
+
     it('GET - 200', async () => {
-      console.log()
       return await request(app.getHttpServer())
         .get('/book/')
         .expect(200)
