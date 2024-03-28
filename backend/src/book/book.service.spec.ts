@@ -7,6 +7,7 @@ import { BookService } from './book.service'
 import { BookEntity } from './entities'
 
 import { bookItem, newItemInfo, ownerMockId } from './mocks'
+import { BookNotFoundException } from './exceptions'
 
 describe('BookService', () => {
   let service: BookService
@@ -23,6 +24,7 @@ describe('BookService', () => {
           useValue: {
             save: jest.fn().mockReturnValue(bookItem),
             find: jest.fn().mockReturnValue([bookItem]),
+            findOneBy: jest.fn().mockReturnValue(bookItem),
           },
         },
       ],
@@ -61,6 +63,24 @@ describe('BookService', () => {
       )
 
       expect(bookRepository.find).toHaveBeenCalledWith()
+    })
+  })
+
+  describe('getOne method', () => {
+    it('the book with correct id should be returned', async () => {
+      expect(await service.getOne(bookItem.id)).toEqual(bookItem)
+
+      expect(bookRepository.findOneBy).toHaveBeenCalledWith({
+        id: bookItem.id,
+      })
+    })
+
+    it('getOne book with wrong id should throw an exception', async () => {
+      bookRepository.findOneBy = jest.fn().mockReturnValue(undefined)
+
+      await expect(service.getOne(bookItem.id)).rejects.toThrowError(
+        BookNotFoundException,
+      )
     })
   })
 })
