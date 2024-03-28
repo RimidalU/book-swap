@@ -72,7 +72,7 @@ describe('create-user.dto', () => {
     expect(errors.map((err) => err.property).includes('password')).toBeTruthy()
   })
 
-  it('email field is correct', async () => {
+  it('password field is correct', async () => {
     dto.password = stringValue
     const ofImportDTO = plainToInstance(CreateUserDto, dto)
     const errors = await validate(ofImportDTO)
