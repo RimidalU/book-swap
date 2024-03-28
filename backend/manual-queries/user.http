@@ -1,0 +1,35 @@
+# User
+
+### Get All Users
+
+GET localhost:3001/user
+
+### Get One User
+
+GET localhost:3001/user/ae8ca0cb-2e97-41fc-b3b2-62d7a5abafe5
+
+### Create User
+
+POST localhost:3001/user
+Content-Type: application/json
+
+{
+  "name": "User Name",
+  "bio": "User Name bio",
+  "email": "user@email.com",
+  "password": "sdfsdfsdfsf"
+}
+
+### Update User
+
+PATCH localhost:3001/user/ae8ca0cb-2e97-41fc-b3b2-62d7a5abafe5
+Content-Type: application/json
+
+{
+  "name": "New Name",
+  "password": "1990"
+}
+
+### Remove User
+
+DELETE localhost:3001/user/68
