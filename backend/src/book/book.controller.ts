@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Post } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common'
 
 import { BookService } from '@src/book/book.service'
 
@@ -12,6 +19,11 @@ export class BookController {
   @Get()
   async getAll(): Promise<BookEntity[]> {
     return await this.bookService.getAll()
+  }
+
+  @Get(':id')
+  async getById(@Param('id', ParseIntPipe) id: number): Promise<BookEntity> {
+    return await this.bookService.getById(id)
   }
 
   @Post()
