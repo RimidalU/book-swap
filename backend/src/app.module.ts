@@ -10,6 +10,7 @@ import { AppController } from '@src/app.controller'
 import { AppService } from '@src/app.service'
 
 import { envSchema } from '@src/env'
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { envSchema } from '@src/env'
     DatabaseModule,
     BookModule,
     UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
