@@ -1,5 +1,6 @@
 import {
   BeforeInsert,
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
@@ -21,11 +22,11 @@ export class UserEntity {
   name: string
 
   @IsEmpty()
-  @Column()
+  @Column('text', { nullable: true })
   bio?: string
 
   @IsEmpty()
-  @Column()
+  @Column('text', { nullable: true })
   avatar?: string
 
   @IsEmail()
@@ -36,7 +37,7 @@ export class UserEntity {
   password: string
 
   @IsEmpty()
-  @Column()
+  @Column('text', { nullable: true })
   token?: string
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
@@ -46,6 +47,7 @@ export class UserEntity {
   updatedAt: Date
 
   @BeforeInsert()
+  @BeforeUpdate()
   async hashPassword() {
     this.password = await bcrypt.hash(this.password, saltOrRounds)
   }
