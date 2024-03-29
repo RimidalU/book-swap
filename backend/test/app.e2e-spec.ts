@@ -8,10 +8,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { bookItem } from '@src/book/mocks'
 import { DataSource } from 'typeorm'
 import { BookEntity } from '@src/book/entities'
+import {userItem} from "@src/user/mocks";
+import {UserEntity} from "@src/user/entities";
 
 describe('AppController (e2e)', () => {
   let app: INestApplication
   let bookId: number
+  let userId: number
   let dataSource: DataSource
   const wrongId = 100500
 
@@ -52,10 +55,12 @@ describe('AppController (e2e)', () => {
 
     dataSource = app.get(DataSource)
     await dataSource.createQueryBuilder().delete().from(BookEntity).execute()
+    await dataSource.createQueryBuilder().delete().from(UserEntity).execute()
   })
 
   afterAll(async () => {
     await dataSource.createQueryBuilder().delete().from(BookEntity).execute()
+    await dataSource.createQueryBuilder().delete().from(UserEntity).execute()
     await app.close()
   })
 
@@ -96,17 +101,6 @@ describe('AppController (e2e)', () => {
           wrongField: 'wrongValue',
         })
         .expect(400)
-    })
-
-    it('GET - 200', async () => {
-      return await request(app.getHttpServer())
-        .get('/book/')
-        .expect(200)
-        .then((resp) => {
-          const arr: BookEntity[] = JSON.parse(resp.text)
-          expect(arr[0].id).toBe(bookId)
-          expect(arr[0].name).toBe(bookItem.name)
-        })
     })
 
     it('GET - 200', async () => {
@@ -183,5 +177,47 @@ describe('AppController (e2e)', () => {
         .delete(`/book/${wrongStringId}`)
         .expect(400)
     })
+  })
+
+  describe('/user', () => {
+    it('POST - 200', () => {
+      return request(app.getHttpServer())
+        .post('/user')
+        .send({
+          name: userItem.name,
+          bio: userItem.bio,
+          email: userItem.email,
+          password: userItem.password
+        })
+        .expect(201)
+        .then((resp) => {
+          userId = +resp.text
+        })
+    })
+
+    it('POST - 400', () => {
+      return request(app.getHttpServer())
+        .post('/user')
+        .send({
+          name: userItem.name,
+          bio: userItem.bio,
+          email: userItem.email,
+          password: userItem.password,
+          wrongField: 'wrongValue',
+        })
+        .expect(400)
+    })
+
+    it('GET - 200', async () => {
+      return await request(app.getHttpServer())
+        .get('/user/')
+        .expect(200)
+        .then((resp) => {
+          const arr: UserEntity[] = JSON.parse(resp.text)
+          expect(arr[0].id).toBe(userId)
+          expect(arr[0].name).toBe(userItem.name)
+        })
+    })
+
   })
 })
