@@ -8,8 +8,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { bookItem } from '@src/book/mocks'
 import { DataSource } from 'typeorm'
 import { BookEntity } from '@src/book/entities'
-import {userItem} from "@src/user/mocks";
-import {UserEntity} from "@src/user/entities";
+import { userItem } from '@src/user/mocks'
+import { UserEntity } from '@src/user/entities'
 
 describe('AppController (e2e)', () => {
   let app: INestApplication
@@ -187,7 +187,7 @@ describe('AppController (e2e)', () => {
           name: userItem.name,
           bio: userItem.bio,
           email: userItem.email,
-          password: userItem.password
+          password: userItem.password,
         })
         .expect(201)
         .then((resp) => {
@@ -218,6 +218,69 @@ describe('AppController (e2e)', () => {
           expect(arr[0].name).toBe(userItem.name)
         })
     })
+  })
 
+  describe('/user/:id', () => {
+    it('GET - 200', () => {
+      return request(app.getHttpServer())
+        .get(`/user/${userId}`)
+        .expect(200)
+        .then((resp) => {
+          const userItem: UserEntity = JSON.parse(resp.text)
+          expect(userItem.id).toBe(userId)
+          expect(userItem.name).toBe(userItem.name)
+        })
+    })
+
+    it('GET - 404', () => {
+      return request(app.getHttpServer()).get(`/user/${wrongId}`).expect(404)
+    })
+
+    it('GET - 400', () => {
+      const wrongStringId = 'wrongStringId'
+      return request(app.getHttpServer())
+        .get(`/user/${wrongStringId}`)
+        .expect(400)
+    })
+
+    it('PATCH - 200', () => {
+      return request(app.getHttpServer())
+        .patch(`/user/${userId}`)
+        .expect(200)
+        .then((resp) => {
+          userId = +resp.text
+        })
+    })
+
+    it('PATCH - 404', () => {
+      return request(app.getHttpServer()).patch(`/user/${wrongId}`).expect(404)
+    })
+
+    it('PATCH - 400', () => {
+      const wrongStringId = 'wrongStringId'
+      return request(app.getHttpServer())
+        .patch(`/user/${wrongStringId}`)
+        .expect(400)
+    })
+
+    it('DELETE - 200', () => {
+      return request(app.getHttpServer())
+        .delete(`/user/${userId}`)
+        .expect(200)
+        .then((resp) => {
+          userId = +resp.text
+        })
+    })
+
+    it('DELETE - 404', () => {
+      return request(app.getHttpServer()).delete(`/user/${wrongId}`).expect(404)
+    })
+
+    it('DELETE - 400', () => {
+      const wrongStringId = 'wrongStringId'
+      return request(app.getHttpServer())
+        .delete(`/user/${wrongStringId}`)
+        .expect(400)
+    })
   })
 })
