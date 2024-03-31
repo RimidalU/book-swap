@@ -10,7 +10,7 @@ import { AppController } from '@src/app.controller'
 import { AppService } from '@src/app.service'
 
 import { envSchema } from '@src/env'
-import { AuthModule } from './auth/auth.module'
+import { AuthModule } from './auth'
 
 @Module({
   imports: [
