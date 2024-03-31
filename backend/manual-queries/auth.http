@@ -1,0 +1,11 @@
+# Auth
+
+### Create User
+
+POST localhost:3001/auth/login
+Content-Type: application/json
+
+{
+  "email": "user@email.com",
+  "password": "sdfsdfsdfsf"
+}
