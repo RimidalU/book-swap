@@ -9,5 +9,6 @@ export const envSchema = z.object({
   TYPEORM_PASSWORD: z.coerce.string().min(1),
   TYPEORM_PORT: z.coerce.number().min(4),
   TYPEORM_HOST: z.coerce.string().min(1).optional().default('localhost'),
+  JWT_CONSTANTS_SECRET: z.coerce.string().min(10),
 })
 export type Env = z.infer<typeof envSchema>
