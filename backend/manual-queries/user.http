@@ -3,6 +3,7 @@
 ### Get All Users
 
 GET localhost:3001/user
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MTE5MjM4NDksImV4cCI6MTcxMTkyMzkwOX0.NU4BWfyI_O5MpL8_Xjuh37n4pD57ZF9QqWG3a_5Emro
 
 ### Get One User
 
