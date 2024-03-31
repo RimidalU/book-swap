@@ -127,5 +127,23 @@ describe('UserService', () => {
         ).rejects.toThrowError(UserNotFoundException)
       })
     })
+
+    describe('getByEmail method', () => {
+      it('the user with correct id should be returned', async () => {
+        expect(await service.getByEmail(userItem.email)).toEqual(userItem)
+
+        expect(userRepository.findOneBy).toHaveBeenCalledWith({
+          email: userItem.email,
+        })
+      })
+
+      it('getByEmail user with wrong id should throw an exception', async () => {
+        userRepository.findOneBy = jest.fn().mockReturnValue(undefined)
+
+        await expect(service.getByEmail(userItem.email)).rejects.toThrowError(
+          UserNotFoundException,
+        )
+      })
+    })
   })
 })
