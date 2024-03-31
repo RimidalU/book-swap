@@ -13,6 +13,8 @@ export const userItem: UserType = {
 }
 export const ownerMockId = 123
 
+export const correctUserPassword = 'sdfsdfsdfsf'
+
 export const newItemInfo = {
   name: userItem.name,
   bio: userItem.bio,
