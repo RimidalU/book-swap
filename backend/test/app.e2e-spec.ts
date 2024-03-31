@@ -8,7 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { bookItem } from '@src/book/mocks'
 import { DataSource } from 'typeorm'
 import { BookEntity } from '@src/book/entities'
-import { userItem } from '@src/user/mocks'
+import { correctUserPassword, userItem } from '@src/user/mocks'
 import { UserEntity } from '@src/user/entities'
 
 describe('AppController (e2e)', () => {
@@ -17,6 +17,7 @@ describe('AppController (e2e)', () => {
   let userId: number
   let dataSource: DataSource
   const wrongId = 100500
+  const wrongStringId = 'wrongStringId'
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -152,7 +153,6 @@ describe('AppController (e2e)', () => {
     })
 
     it('PATCH - 400', () => {
-      const wrongStringId = 'wrongStringId'
       return request(app.getHttpServer())
         .patch(`/book/${wrongStringId}`)
         .expect(400)
@@ -187,7 +187,7 @@ describe('AppController (e2e)', () => {
           name: userItem.name,
           bio: userItem.bio,
           email: userItem.email,
-          password: userItem.password,
+          password: correctUserPassword,
         })
         .expect(201)
         .then((resp) => {
@@ -281,6 +281,54 @@ describe('AppController (e2e)', () => {
       return request(app.getHttpServer())
         .delete(`/user/${wrongStringId}`)
         .expect(400)
+    })
+  })
+
+  describe('/auth/login', () => {
+    const { password, ...userItemValid } = userItem
+
+    it('POST - 200', async () => {
+      return request(app.getHttpServer())
+        .post('/user')
+        .send({
+          name: userItem.name,
+          bio: userItem.bio,
+          email: userItem.email,
+          password: correctUserPassword,
+        })
+        .expect(201)
+        .then((resp) => {
+          userId = +resp.text
+        })
+
+      return request(app.getHttpServer())
+        .post('/auth/login')
+        .send({
+          email: userItem.email,
+          password: correctUserPassword,
+        })
+        .expect(200)
+      expect(userItemValid)
+    })
+
+    it('POST - 401', () => {
+      return request(app.getHttpServer())
+        .post('/auth/login')
+        .send({
+          email: userItem.email,
+          password: wrongStringId,
+        })
+        .expect(401)
+    })
+
+    it('POST - 404', () => {
+      return request(app.getHttpServer())
+        .post('/auth/login')
+        .send({
+          email: wrongStringId,
+          password: correctUserPassword,
+        })
+        .expect(404)
     })
   })
 })
