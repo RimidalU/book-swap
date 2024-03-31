@@ -29,7 +29,7 @@ export class UserService {
   async getById(id: number): Promise<UserEntity> {
     const user = await this.userRepository.findOneBy({ id })
     if (!user) {
-      throw new UserNotFoundException({id})
+      throw new UserNotFoundException({ id })
     }
     return user
   }
@@ -51,9 +51,8 @@ export class UserService {
   async getByEmail(email: string): Promise<UserEntity> {
     const user = await this.userRepository.findOneBy({ email })
     if (!user) {
-      throw new UserNotFoundException({email})
+      throw new UserNotFoundException({ email })
     }
     return user
   }
-
 }
