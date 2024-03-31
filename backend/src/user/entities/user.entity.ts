@@ -30,7 +30,7 @@ export class UserEntity {
   avatar?: string
 
   @IsEmail()
-  @Column()
+  @Column({ unique: true })
   email: string
 
   @Column()
