@@ -3,11 +3,10 @@
 ### Get All Users
 
 GET localhost:3001/user
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MTE5MjM4NDksImV4cCI6MTcxMTkyMzkwOX0.NU4BWfyI_O5MpL8_Xjuh37n4pD57ZF9QqWG3a_5Emro
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NzIsIm5hbWUiOiJVc2VyIE5hbWUiLCJlbWFpbCI6InVzZXJAZW1haWwuY29tIiwiaWF0IjoxNzExOTc3MjU5LCJleHAiOjE3MTIxNTAwNTl9.FmLaXKn36JK6dvwHjpnKVLi_s_vftPJ16y-JJe3zRcM
 ### Get One User
 
-GET localhost:3001/user/ae8ca0cb-2e97-41fc-b3b2-62d7a5abafe5
+GET localhost:3001/user/12
 
 ### Create User
 

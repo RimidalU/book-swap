@@ -6,12 +6,13 @@ GET localhost:3001/book
 
 ### Get One Book
 
-GET localhost:3001/book/ae8ca0cb-2e97-41fc-b3b2-62d7a5abafe5
+GET localhost:3001/book/53
 
 ### Create Book
 
 POST localhost:3001/book
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IlVzZXIgTmFtZSIsImVtYWlsIjoidXNlckBlbWFpbC5jb20iLCJpYXQiOjE3MTE5ODA1NzIsImV4cCI6MTcxMjE1MzM3Mn0.v7z3RNPvdZ81TVjjawrLENZWe_jKzW_zwER63dkeQ2k
 
 {
   "name": "Book Name",
