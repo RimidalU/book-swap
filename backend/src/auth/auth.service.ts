@@ -18,7 +18,6 @@ export class AuthService {
     email,
     password,
   }: ValidateUserDto): Promise<UserValidatedType | null> {
-    console.log(email, password)
     const user = await this.usersService.getByEmail(email)
     if (user && (await bcrypt.compare(password, user.password))) {
       const { password, ...result } = user
@@ -27,8 +26,8 @@ export class AuthService {
     return null
   }
 
-  async login(user: any) {
-    const payload = { username: user.username, sub: user.userId }
+  async login(user: UserValidatedType) {
+    const payload = { id: user.id, name: user.name, email: user.email }
     return {
       access_token: this.jwtService.sign(payload),
     }

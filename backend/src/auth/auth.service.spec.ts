@@ -1,11 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing'
+
 import { AuthService } from './auth.service'
 import { UserService } from '@src/user'
+import { JwtService } from '@nestjs/jwt'
+
 import { correctUserPassword, userItem } from '@src/user/mocks'
 
 describe('AuthService', () => {
   let service: AuthService
   let userService: UserService
+  let jwtService: JwtService
+  const { password, ...userItemValid } = userItem
+  const mockJwtToken =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzYsIm5hbWUiOiJVc2VyIE5hbWUiLCJlbWFpbCI6InVzZXJAZWRkbWFpbC5jb20iLCJpYXQiOjE3MTE5NjA4NjcsImV4cCI6MTcxMTk2MDkyN30.8Kqn3HGIkTdUKlluAyvGydTw2azL22trL6lzwFWtjO4'
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -17,11 +24,20 @@ describe('AuthService', () => {
             getByEmail: jest.fn().mockReturnValue(userItem),
           },
         },
+        JwtService,
+        {
+          provide: JwtService,
+          useValue: {
+            secret: process.env.JWT_CONSTANTS_SECRET,
+            sign: jest.fn().mockReturnValue(mockJwtToken),
+          },
+        },
       ],
     }).compile()
 
     service = module.get(AuthService)
     userService = module.get(UserService)
+    jwtService = module.get(JwtService)
   })
 
   it('AuthService should be defined', () => {
@@ -33,8 +49,6 @@ describe('AuthService', () => {
   })
 
   describe('validateUser method', () => {
-    const { password, ...userItemValid } = userItem
-
     it('the user with correct email and password should be returned', async () => {
       expect(
         await service.validateUser({
@@ -64,6 +78,20 @@ describe('AuthService', () => {
           password: correctUserPassword,
         }),
       ).toEqual(null)
+    })
+  })
+
+  describe('login method', () => {
+    it('the login with correct user should be return access token', async () => {
+      expect(await service.login(userItemValid)).toEqual({
+        access_token: mockJwtToken,
+      })
+
+      expect(jwtService.sign).toHaveBeenCalledWith({
+        id: userItem.id,
+        email: userItem.email,
+        name: userItem.name,
+      })
     })
   })
 })
