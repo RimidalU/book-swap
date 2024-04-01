@@ -7,12 +7,16 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common'
 
 import { BookService } from '@src/book/book.service'
 
 import { CreateBookDto, UpdateBookDto } from '@src/book/dto'
 import { BookEntity } from '@src/book/entities'
+import { JwtStrategyValidateType } from '@src/book/types/jwt-strategy-validate.type'
+import { JwtAuthGuard } from '@src/auth/jwt-auth.guard'
+import { UserInfo } from '@src/user/decorators/user-info.decorator'
 
 @Controller('book')
 export class BookController {
@@ -28,9 +32,13 @@ export class BookController {
     return await this.bookService.getById(id)
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Body() payload: CreateBookDto): Promise<number> {
-    return await this.bookService.create(payload)
+  async create(
+    @UserInfo() currentUser: JwtStrategyValidateType,
+    @Body() payload: CreateBookDto,
+  ): Promise<number> {
+    return await this.bookService.create(currentUser, payload)
   }
 
   @Delete(':id')
