@@ -1,4 +1,5 @@
 import { BookType } from '@src/book/types/book.type'
+import { UserEntity } from '@src/user/entities'
 
 export const bookItem: BookType = {
   id: 12,
@@ -7,7 +8,7 @@ export const bookItem: BookType = {
   year: 2022,
   description: 'Book Description',
   condition: 4,
-  owner: 10,
+  owner: new UserEntity(),
   isBorrowed: false,
   borrower: null,
   borrowersQueue: [],

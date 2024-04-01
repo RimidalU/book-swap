@@ -11,9 +11,10 @@ import { BookService } from '@src/book/book.service'
 import { BookStockCycleLoggerMiddleware } from '@src/book/middleware'
 
 import { BookEntity } from '@src/book/entities'
+import { UserModule } from '@src/user'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([BookEntity])],
+  imports: [TypeOrmModule.forFeature([BookEntity]), UserModule],
   controllers: [BookController],
   providers: [BookService],
 })

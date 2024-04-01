@@ -10,6 +10,7 @@ export const userItem: UserType = {
   token: null,
   createdAt: new Date(),
   updatedAt: new Date(),
+  books: [],
 }
 export const ownerMockId = 123
 

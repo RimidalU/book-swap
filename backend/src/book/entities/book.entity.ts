@@ -3,10 +3,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
 import { IsEmpty } from 'class-validator'
+import { UserEntity } from '@src/user/entities'
 
 @Entity('book')
 export class BookEntity {
@@ -30,8 +32,8 @@ export class BookEntity {
   @Column('int2')
   condition: number
 
-  @Column()
-  owner: number
+  @ManyToOne(() => UserEntity, (user) => user.books)
+  owner: UserEntity
 
   @Column('boolean', { default: false })
   isBorrowed: boolean

@@ -6,21 +6,26 @@ import { Repository } from 'typeorm'
 import { BookEntity } from '@src/book/entities'
 import { CreateBookDto, UpdateBookDto } from '@src/book/dto'
 
-import { ownerMockId } from '@src/book/mocks'
 import { BookNotFoundException } from '@src/book/exceptions'
+import { JwtStrategyValidateType } from '@src/book/types/jwt-strategy-validate.type'
+import { UserService } from '@src/user'
 
 @Injectable()
 export class BookService {
   constructor(
     @InjectRepository(BookEntity)
     private readonly bookRepository: Repository<BookEntity>,
+    private readonly userService: UserService,
   ) {}
 
-  async create(payload: CreateBookDto): Promise<number> {
-    const ownerId = ownerMockId
+  async create(
+    { id }: JwtStrategyValidateType,
+    payload: CreateBookDto,
+  ): Promise<number> {
+    const owner = await this.userService.getById(id)
 
     const newBook = new BookEntity()
-    Object.assign(newBook, { ...payload, owner: ownerId })
+    Object.assign(newBook, { ...payload, owner: owner })
 
     const book = await this.bookRepository.save(newBook)
     return book.id

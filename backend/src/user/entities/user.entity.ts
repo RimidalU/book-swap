@@ -4,12 +4,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
 import * as bcrypt from 'bcrypt'
 
 import { IsEmail, IsEmpty } from 'class-validator'
+import { BookEntity } from '@src/book/entities'
 
 const saltOrRounds = 10
 
@@ -51,4 +53,7 @@ export class UserEntity {
   async hashPassword() {
     this.password = await bcrypt.hash(this.password, saltOrRounds)
   }
+
+  @OneToMany(() => BookEntity, (book) => book.owner)
+  books: BookEntity[]
 }
