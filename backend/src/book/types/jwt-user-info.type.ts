@@ -1,4 +1,4 @@
-export type JwtStrategyValidateType = {
+export type JwtUserInfoType = {
   id: number
   name: string
   email: string

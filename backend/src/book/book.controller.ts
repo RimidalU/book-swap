@@ -14,9 +14,9 @@ import { BookService } from '@src/book/book.service'
 
 import { CreateBookDto, UpdateBookDto } from '@src/book/dto'
 import { BookEntity } from '@src/book/entities'
-import { JwtStrategyValidateType } from '@src/book/types/jwt-strategy-validate.type'
 import { JwtAuthGuard } from '@src/auth/jwt-auth.guard'
 import { UserInfo } from '@src/user/decorators/user-info.decorator'
+import { JwtUserInfoType } from '@src/book/types'
 
 @Controller('book')
 export class BookController {
@@ -35,15 +35,18 @@ export class BookController {
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(
-    @UserInfo() currentUser: JwtStrategyValidateType,
+    @UserInfo() currentUser: JwtUserInfoType,
     @Body() payload: CreateBookDto,
   ): Promise<number> {
     return await this.bookService.create(currentUser, payload)
   }
 
   @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number): Promise<number> {
-    return await this.bookService.remove(id)
+  async remove(
+    @UserInfo() currentUser: JwtUserInfoType,
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<number> {
+    return await this.bookService.remove(currentUser, id)
   }
 
   @Patch(':id')

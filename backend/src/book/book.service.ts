@@ -7,8 +7,8 @@ import { BookEntity } from '@src/book/entities'
 import { CreateBookDto, UpdateBookDto } from '@src/book/dto'
 
 import { BookNotFoundException } from '@src/book/exceptions'
-import { JwtStrategyValidateType } from '@src/book/types/jwt-strategy-validate.type'
 import { UserService } from '@src/user'
+import { JwtUserInfoType } from '@src/book/types'
 
 @Injectable()
 export class BookService {
@@ -19,7 +19,7 @@ export class BookService {
   ) {}
 
   async create(
-    { id }: JwtStrategyValidateType,
+    { id }: JwtUserInfoType,
     payload: CreateBookDto,
   ): Promise<number> {
     const owner = await this.userService.getById(id)
@@ -43,7 +43,7 @@ export class BookService {
     return book
   }
 
-  async remove(id: number): Promise<number> {
+  async remove(currentUser: JwtUserInfoType, id: number): Promise<number> {
     const entity = await this.getById(id)
     const book = await this.bookRepository.remove(entity)
     return book.id
