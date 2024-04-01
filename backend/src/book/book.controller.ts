@@ -16,7 +16,6 @@ import { CreateBookDto, UpdateBookDto } from '@src/book/dto'
 import { BookEntity } from '@src/book/entities'
 import { JwtAuthGuard } from '@src/auth/jwt-auth.guard'
 import { UserInfo } from '@src/user/decorators/user-info.decorator'
-import { JwtUserInfoType } from '@src/book/types'
 
 @Controller('book')
 export class BookController {
@@ -35,25 +34,26 @@ export class BookController {
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(
-    @UserInfo() currentUser: JwtUserInfoType,
+    @UserInfo('id') currentUserId: number,
     @Body() payload: CreateBookDto,
   ): Promise<number> {
-    return await this.bookService.create(currentUser, payload)
+    return await this.bookService.create(currentUserId, payload)
   }
 
   @Delete(':id')
   async remove(
-    @UserInfo() currentUser: JwtUserInfoType,
+    @UserInfo('id') currentUserId: number,
     @Param('id', ParseIntPipe) id: number,
   ): Promise<number> {
-    return await this.bookService.remove(currentUser, id)
+    return await this.bookService.remove(currentUserId, id)
   }
 
   @Patch(':id')
   async update(
+    @UserInfo('id') currentUserId: number,
     @Param('id', ParseIntPipe) id: number,
     @Body() payload: UpdateBookDto,
   ): Promise<number> {
-    return await this.bookService.update(id, payload)
+    return await this.bookService.update(currentUserId, id, payload)
   }
 }

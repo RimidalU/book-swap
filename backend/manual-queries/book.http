@@ -12,7 +12,7 @@ GET localhost:3001/book/53
 
 POST localhost:3001/book
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IlVzZXIgTmFtZSIsImVtYWlsIjoidXNlckBlbWFpbC5jb20iLCJpYXQiOjE3MTE5ODA1NzIsImV4cCI6MTcxMjE1MzM3Mn0.v7z3RNPvdZ81TVjjawrLENZWe_jKzW_zwER63dkeQ2k
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6IlVzZXIgTmFtZSIsImVtYWlsIjoidXNlckBlbWRhaWwuY29tIiwiaWF0IjoxNzExOTg2OTE0LCJleHAiOjE3MTIxNTk3MTR9.bMO0mE_9ecfTjxQZ2UsGL736pCpN_14GxYyYJQ_I0Fw
 
 {
   "name": "Book Name",
@@ -23,8 +23,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6I
 
 ### Update Book
 
-PATCH localhost:3001/book/ae8ca0cb-2e97-41fc-b3b2-62d7a5abafe5
+PATCH localhost:3001/book/5
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IlVzZXIgTmFtZSIsImVtYWlsIjoidXNlckBlbWFpbC5jb20iLCJpYXQiOjE3MTE5ODY2NzgsImV4cCI6MTcxMjE1OTQ3OH0.E40sqDH8yKOh-MPNf3qtJ2gnZcSj3IkZAtOMDGy6hWM
 
 {
   "year": 11111,
@@ -33,8 +34,8 @@ Content-Type: application/json
 
 ### Remove Book
 
-DELETE localhost:3001/book/37c61a4e-1a9c-4c39-b643-32901928571e
-
+DELETE localhost:3001/book/6
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6IlVzZXIgTmFtZSIsImVtYWlsIjoidXNlckBlbWRhaWwuY29tIiwiaWF0IjoxNzExOTg2OTE0LCJleHAiOjE3MTIxNTk3MTR9.bMO0mE_9ecfTjxQZ2UsGL736pCpN_14GxYyYJQ_I0Fw
 
 ### Search Books with owner id
 

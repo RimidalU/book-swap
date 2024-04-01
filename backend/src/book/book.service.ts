@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import {ForbiddenException, Injectable} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 
 import { Repository } from 'typeorm'
@@ -9,6 +9,7 @@ import { CreateBookDto, UpdateBookDto } from '@src/book/dto'
 import { BookNotFoundException } from '@src/book/exceptions'
 import { UserService } from '@src/user'
 import { JwtUserInfoType } from '@src/book/types'
+import {errorUtil} from "zod/lib/helpers/errorUtil";
 
 @Injectable()
 export class BookService {
@@ -19,10 +20,10 @@ export class BookService {
   ) {}
 
   async create(
-    { id }: JwtUserInfoType,
+    currentUserId: number,
     payload: CreateBookDto,
   ): Promise<number> {
-    const owner = await this.userService.getById(id)
+    const owner = await this.userService.getById(currentUserId)
 
     const newBook = new BookEntity()
     Object.assign(newBook, { ...payload, owner: owner })
@@ -43,17 +44,30 @@ export class BookService {
     return book
   }
 
-  async remove(currentUser: JwtUserInfoType, id: number): Promise<number> {
+  async remove(currentUser: number, id: number): Promise<number> {
     const entity = await this.getById(id)
-    const book = await this.bookRepository.remove(entity)
-    return book.id
+
+    if(await this.checkPermission(currentUser, entity.owner.id) === true){
+      const book = await this.bookRepository.remove(entity)
+      return book.id
+    }
   }
 
-  async update(id: number, payload: UpdateBookDto): Promise<number> {
+  async update(currentUser: number, id: number, payload: UpdateBookDto): Promise<number> {
     const entity = await this.getById(id)
-    Object.assign(entity, payload)
 
-    await this.bookRepository.save(entity)
-    return entity.id
+    if( await this.checkPermission(currentUser, entity.owner.id)){
+      Object.assign(entity, payload)
+
+      await this.bookRepository.save(entity)
+      return entity.id
+    }
+  }
+
+  async checkPermission(currentUserId, ownerId): Promise<boolean>{
+        if(currentUserId === ownerId){
+          return true
+    }
+   throw new ForbiddenException()
   }
 }

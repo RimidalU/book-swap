@@ -16,7 +16,7 @@ Content-Type: application/json
 {
   "name": "User Name",
   "bio": "User Name bio",
-  "email": "user@email.com",
+  "email": "user@emdail.com",
   "password": "sdfsdfsdfsf"
 }
 

@@ -32,7 +32,7 @@ export class BookEntity {
   @Column('int2')
   condition: number
 
-  @ManyToOne(() => UserEntity, (user) => user.books)
+  @ManyToOne(() => UserEntity, (user) => user.books, {eager:true})
   owner: UserEntity
 
   @Column('boolean', { default: false })
