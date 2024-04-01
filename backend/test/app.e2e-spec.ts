@@ -1,15 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { INestApplication, ValidationPipe } from '@nestjs/common'
+import {
+  ExecutionContext,
+  INestApplication,
+  ValidationPipe,
+} from '@nestjs/common'
 import * as request from 'supertest'
 
 import { AppModule } from '@src/app.module'
 import { TypeOrmCoreModule } from '@nestjs/typeorm/dist/typeorm-core.module'
 import { ConfigModule, ConfigService } from '@nestjs/config'
+import { JwtAuthGuard } from '@src/auth/jwt-auth.guard'
+
+import { BookEntity } from '@src/book/entities'
+import { UserEntity } from '@src/user/entities'
+import { correctUserPassword, userItem } from '@src/user/mocks'
 import { bookItem } from '@src/book/mocks'
 import { DataSource } from 'typeorm'
-import { BookEntity } from '@src/book/entities'
-import { correctUserPassword, userItem } from '@src/user/mocks'
-import { UserEntity } from '@src/user/entities'
 
 describe('AppController (e2e)', () => {
   let app: INestApplication
@@ -42,7 +48,19 @@ describe('AppController (e2e)', () => {
           }),
         }),
       ],
-    }).compile()
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useValue({
+        canActivate: (context: ExecutionContext) => {
+          const req = context.switchToHttp().getRequest()
+          req.user = {
+            email: 'any@email.com',
+            sub: 1,
+          }
+          return true
+        },
+      })
+      .compile()
 
     app = moduleFixture.createNestApplication()
     app.useGlobalPipes(
