@@ -3,7 +3,7 @@ import {
   BeforeUpdate,
   Column,
   CreateDateColumn,
-  Entity,
+  Entity, JoinTable, ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -56,4 +56,8 @@ export class UserEntity {
 
   @OneToMany(() => BookEntity, (book) => book.owner)
   books: BookEntity[]
+
+  @ManyToMany(() => BookEntity)
+  @JoinTable()
+  favorites: BookEntity[]
 }
