@@ -1,29 +1,28 @@
-import {ForbiddenException, Injectable} from '@nestjs/common'
+import { ForbiddenException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 
-import { Repository } from 'typeorm'
+import { DataSource, Repository } from 'typeorm'
 
 import { BookEntity } from '@src/book/entities'
 import { CreateBookDto, UpdateBookDto } from '@src/book/dto'
 
 import { BookNotFoundException } from '@src/book/exceptions'
-import { UserService } from '@src/user'
-import { JwtUserInfoType } from '@src/book/types'
-import {errorUtil} from "zod/lib/helpers/errorUtil";
+import { QueryInterface } from '@src/book/types'
+import { BooksResponseInterface } from '@src/book/types/books-response.interface'
+import { UserEntity } from '@src/user/entities'
 
 @Injectable()
 export class BookService {
   constructor(
     @InjectRepository(BookEntity)
     private readonly bookRepository: Repository<BookEntity>,
-    private readonly userService: UserService,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+    private readonly dataSource: DataSource,
   ) {}
 
-  async create(
-    currentUserId: number,
-    payload: CreateBookDto,
-  ): Promise<number> {
-    const owner = await this.userService.getById(currentUserId)
+  async create(currentUserId: number, payload: CreateBookDto): Promise<number> {
+    const owner = await this.userRepository.findOneBy({ id: currentUserId })
 
     const newBook = new BookEntity()
     Object.assign(newBook, { ...payload, owner: owner })
@@ -32,8 +31,55 @@ export class BookService {
     return book.id
   }
 
-  async getAll(): Promise<BookEntity[]> {
-    return await this.bookRepository.find()
+  async getAll(
+    currentUserId: number,
+    query: QueryInterface,
+  ): Promise<BooksResponseInterface> {
+    const { limit = 20, offset = 0 } = query
+
+    const queryBuilder = await this.dataSource
+      .getRepository(BookEntity)
+      .createQueryBuilder('book')
+      .leftJoinAndSelect('book.owner', 'books')
+
+    queryBuilder.orderBy('book.createdAt', 'DESC')
+
+    if (query.owner) {
+      const owner = await this.userRepository.findOneBy({
+        name: query.owner,
+      })
+      if (owner) {
+        queryBuilder.andWhere('book.owner = :id', {
+          id: owner.id,
+        })
+      }
+    }
+
+    if (query.name) {
+      queryBuilder.andWhere('book.name LIKE :name', {
+        name: `%${query.name}%`,
+      })
+    }
+
+    if (query.author) {
+      queryBuilder.andWhere('book.name LIKE :author', {
+        author: `%${query.author}%`,
+      })
+    }
+
+    if (query.tag) {
+      queryBuilder.andWhere('book.tag LIKE :tag', {
+        tags: `%${query.tag}%`,
+      })
+    }
+
+    queryBuilder.limit(limit)
+    queryBuilder.offset(offset)
+
+    const books = await queryBuilder.getMany()
+    const count = await queryBuilder.getCount()
+
+    return { books, count }
   }
 
   async getById(id: number): Promise<BookEntity> {
@@ -47,16 +93,20 @@ export class BookService {
   async remove(currentUser: number, id: number): Promise<number> {
     const entity = await this.getById(id)
 
-    if(await this.checkPermission(currentUser, entity.owner.id) === true){
+    if ((await this.checkPermission(currentUser, entity.owner.id)) === true) {
       const book = await this.bookRepository.remove(entity)
       return book.id
     }
   }
 
-  async update(currentUser: number, id: number, payload: UpdateBookDto): Promise<number> {
+  async update(
+    currentUser: number,
+    id: number,
+    payload: UpdateBookDto,
+  ): Promise<number> {
     const entity = await this.getById(id)
 
-    if( await this.checkPermission(currentUser, entity.owner.id)){
+    if (await this.checkPermission(currentUser, entity.owner.id)) {
       Object.assign(entity, payload)
 
       await this.bookRepository.save(entity)
@@ -64,10 +114,10 @@ export class BookService {
     }
   }
 
-  async checkPermission(currentUserId, ownerId): Promise<boolean>{
-        if(currentUserId === ownerId){
-          return true
+  async checkPermission(currentUserId, ownerId): Promise<boolean> {
+    if (currentUserId === ownerId) {
+      return true
     }
-   throw new ForbiddenException()
+    throw new ForbiddenException()
   }
 }

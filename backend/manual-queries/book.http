@@ -2,7 +2,7 @@
 
 ### Get All Books
 
-GET localhost:3001/book
+GET localhost:3001/book?name=bob
 
 ### Get One Book
 

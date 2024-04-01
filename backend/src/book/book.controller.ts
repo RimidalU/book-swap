@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common'
 
@@ -16,14 +17,19 @@ import { CreateBookDto, UpdateBookDto } from '@src/book/dto'
 import { BookEntity } from '@src/book/entities'
 import { JwtAuthGuard } from '@src/auth/jwt-auth.guard'
 import { UserInfo } from '@src/user/decorators/user-info.decorator'
+import { BooksResponseInterface } from '@src/book/types/books-response.interface'
+import { QueryInterface } from '@src/book/types'
 
 @Controller('book')
 export class BookController {
   constructor(private readonly bookService: BookService) {}
 
   @Get()
-  async getAll(): Promise<BookEntity[]> {
-    return await this.bookService.getAll()
+  async getAll(
+    @UserInfo('id') currentUserId: number,
+    @Query() query: QueryInterface,
+  ): Promise<BooksResponseInterface> {
+    return await this.bookService.getAll(currentUserId, query)
   }
 
   @Get(':id')
