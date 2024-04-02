@@ -6,4 +6,5 @@ export interface QueryInterface {
   author?: string
   tag?: string
   inFavorites?: boolean
+  selectUser?: string
 }

@@ -55,6 +55,23 @@ export class BookService {
       }
     }
 
+    if (query.selectUser) {
+      const user = await this.userRepository.findOne({
+        where: { name: query.selectUser },
+        relations: ['favorites'],
+      })
+
+      const favoritesUserBookIds = user.favorites.map((book) => book.id)
+
+      if (favoritesUserBookIds.length > 0) {
+        queryBuilder.andWhere('book.owner IN (:...favoritesUserBookIds)', {
+          favoritesUserBookIds,
+        })
+      } else {
+        queryBuilder.andWhere('1=0')
+      }
+    }
+
     if (query.name) {
       queryBuilder.andWhere('book.name LIKE :name', {
         name: `%${query.name}%`,
