@@ -24,6 +24,7 @@ import { QueryInterface } from '@src/book/types'
 export class BookController {
   constructor(private readonly bookService: BookService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getAll(
     @UserInfo('id') currentUserId: number,
@@ -61,5 +62,23 @@ export class BookController {
     @Body() payload: UpdateBookDto,
   ): Promise<number> {
     return await this.bookService.update(currentUserId, id, payload)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('favorites/:id')
+  async addToFavorites(
+    @UserInfo('id') currentUserId: number,
+    @Param('id', ParseIntPipe) bookId: number,
+  ): Promise<number> {
+    return await this.bookService.addToFavorites(currentUserId, bookId)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('favorites/:id')
+  async removeFromFavorites(
+    @UserInfo('id') currentUserId: number,
+    @Param('id', ParseIntPipe) bookId: number,
+  ): Promise<number> {
+    return await this.bookService.removeFromFavorites(currentUserId, bookId)
   }
 }

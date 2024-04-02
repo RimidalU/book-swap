@@ -12,6 +12,7 @@ export const bookItem: BookType = {
   isBorrowed: false,
   borrower: null,
   borrowersQueue: [],
+  likes: 0,
   createdAt: new Date(),
   updatedAt: new Date(),
 }

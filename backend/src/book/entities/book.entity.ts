@@ -46,6 +46,10 @@ export class BookEntity {
   @Column('int', { array: true, default: [] })
   borrowersQueue?: number[]
 
+  @IsEmpty()
+  @Column('int2', { default: 0 })
+  likes: number
+
   @CreateDateColumn({ type: 'timestamp with time zone' })
   createdAt: Date
 

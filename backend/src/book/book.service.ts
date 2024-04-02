@@ -120,4 +120,52 @@ export class BookService {
     }
     throw new ForbiddenException()
   }
+
+  async addToFavorites(currentUserId: number, bookId: number): Promise<number> {
+    const book = await this.getById(bookId)
+    const user = await this.userRepository.findOne({
+      where: { id: currentUserId },
+      relations: ['favorites'],
+    })
+    const isNotFavorite =
+      user.favorites.findIndex(
+        (bookInFavorites) => bookInFavorites.id === book.id,
+      ) === -1
+
+    if (isNotFavorite) {
+      user.favorites.push(book)
+      book.likes += 1
+
+      await this.bookRepository.save(book)
+      await this.userRepository.save(user)
+
+      return bookId
+    }
+    return bookId
+  }
+
+  async removeFromFavorites(
+    currentUserId: number,
+    bookId: number,
+  ): Promise<number> {
+    const book = await this.getById(bookId)
+    const user = await this.userRepository.findOne({
+      where: { id: currentUserId },
+      relations: ['favorites'],
+    })
+    const bookIndex = user.favorites.findIndex(
+      (bookInFavorites) => bookInFavorites.id === book.id,
+    )
+
+    if (bookIndex >= 0) {
+      user.favorites.splice(bookIndex, 1)
+      book.likes -= 1
+
+      await this.bookRepository.save(book)
+      await this.userRepository.save(user)
+
+      return bookId
+    }
+    return bookId
+  }
 }
