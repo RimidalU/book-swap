@@ -36,6 +36,7 @@ export class BookService {
     query: QueryInterface,
   ): Promise<BooksResponseInterface> {
     const { limit = 20, offset = 0 } = query
+    let favoritesUserBookIds: number[]
 
     const queryBuilder = await this.dataSource
       .getRepository(BookEntity)
@@ -61,7 +62,7 @@ export class BookService {
         relations: ['favorites'],
       })
 
-      const favoritesUserBookIds = user.favorites.map((book) => book.id)
+      favoritesUserBookIds = user.favorites.map((book) => book.id)
 
       if (favoritesUserBookIds.length > 0) {
         queryBuilder.andWhere('book.owner IN (:...favoritesUserBookIds)', {
@@ -90,13 +91,28 @@ export class BookService {
       })
     }
 
+    if (currentUserId) {
+      const user = await this.userRepository.findOne({
+        where: { id: currentUserId },
+        relations: ['favorites'],
+      })
+
+      favoritesUserBookIds = user.favorites.map((book) => book.id)
+    }
+
     queryBuilder.limit(limit)
     queryBuilder.offset(offset)
 
     const books = await queryBuilder.getMany()
     const count = await queryBuilder.getCount()
 
-    return { books, count }
+    const favoritesBook = books.map((book) => {
+      const inFavorites = favoritesUserBookIds.includes(book.id)
+
+      return { ...book, inFavorites }
+    })
+
+    return { books: favoritesBook, count }
   }
 
   async getById(id: number): Promise<BookEntity> {
