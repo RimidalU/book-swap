@@ -7,7 +7,6 @@ export const userItem: UserType = {
   avatar: 'Link to avatar',
   email: 'user@email.com',
   password: '$2a$10$e4O2ybUAsEfQfFiW8r1Ag.00kFv9a/4ZdUZbgrwSjsR7FBzMmHNpO',
-  token: null,
   favorites: [],
   createdAt: new Date(),
   updatedAt: new Date(),

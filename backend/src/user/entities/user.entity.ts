@@ -14,6 +14,7 @@ import * as bcrypt from 'bcrypt'
 
 import { IsEmail, IsEmpty } from 'class-validator'
 import { BookEntity } from '@src/book/entities'
+import { ApiProperty } from '@nestjs/swagger'
 
 const saltOrRounds = 10
 
@@ -23,9 +24,17 @@ export class UserEntity {
   id: number
 
   @Column()
+  @ApiProperty({
+    example: 'Don Dou',
+    description: 'User Name',
+  })
   name: string
 
   @IsEmpty()
+  @ApiProperty({
+    example: 'All this happened back in...',
+    description: 'Interesting stories from my life',
+  })
   @Column('text', { nullable: true })
   bio?: string
 
@@ -39,10 +48,6 @@ export class UserEntity {
 
   @Column()
   password: string
-
-  @IsEmpty()
-  @Column('text', { nullable: true })
-  token?: string
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
   createdAt: Date
