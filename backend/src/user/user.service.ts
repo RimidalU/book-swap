@@ -36,8 +36,8 @@ export class UserService {
 
   async remove(id: number): Promise<number> {
     const entity = await this.getById(id)
-    const user = await this.userRepository.remove(entity)
-    return user.id
+    await this.userRepository.remove(entity)
+    return id
   }
 
   async update(id: number, payload: UpdateUserDto): Promise<number> {
