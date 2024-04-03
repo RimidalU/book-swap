@@ -4,6 +4,8 @@ import { ConfigService } from '@nestjs/config'
 import { AppModule } from '@src/app.module'
 import { ValidationPipe } from '@nestjs/common'
 
+import { initSwagger } from '@src/app.swagger'
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   app.useGlobalPipes(
@@ -17,6 +19,8 @@ async function bootstrap() {
   const config = await app.get(ConfigService)
 
   const port = +config.get<number>('API_PORT') || 3000
+
+  initSwagger(app)
 
   await app.listen(port, () =>
     console.log(`Server is listening on port ${port}`),
