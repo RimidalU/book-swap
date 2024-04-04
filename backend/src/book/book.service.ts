@@ -7,7 +7,10 @@ import { BookEntity } from '@src/book/entities'
 import { CreateBookDto, UpdateBookDto } from '@src/book/dto'
 
 import { BookNotFoundException } from '@src/book/exceptions'
-import { QueryInterface } from '@src/book/types'
+import {
+  BookEntityWithInFavoritesInterface,
+  QueryInterface,
+} from '@src/book/types'
 import { BooksResponseInterface } from '@src/book/types/books-response.interface'
 import { UserEntity } from '@src/user/entities'
 
@@ -56,20 +59,21 @@ export class BookService {
       }
     }
 
-    if (query.selectUser) {
+    if (query.selectedUser) {
       const user = await this.userRepository.findOne({
-        where: { name: query.selectUser },
+        where: { name: query.selectedUser },
         relations: ['favorites'],
       })
+      if (user) {
+        favoritesUserBookIds = user.favorites.map((book) => book.id)
 
-      favoritesUserBookIds = user.favorites.map((book) => book.id)
-
-      if (favoritesUserBookIds.length > 0) {
-        queryBuilder.andWhere('book.owner IN (:...favoritesUserBookIds)', {
-          favoritesUserBookIds,
-        })
-      } else {
-        queryBuilder.andWhere('1=0')
+        if (favoritesUserBookIds.length > 0) {
+          queryBuilder.andWhere('book.owner IN (:...favoritesUserBookIds)', {
+            favoritesUserBookIds,
+          })
+        } else {
+          queryBuilder.andWhere('1=0')
+        }
       }
     }
 
@@ -96,7 +100,6 @@ export class BookService {
         where: { id: currentUserId },
         relations: ['favorites'],
       })
-
       favoritesUserBookIds = user.favorites.map((book) => book.id)
     }
 
@@ -115,7 +118,7 @@ export class BookService {
     return { books: favoritesBook, count }
   }
 
-  async getById(id: number): Promise<BookEntity> {
+  async getOne(id: number): Promise<BookEntity> {
     const book = await this.bookRepository.findOneBy({ id })
     if (!book) {
       throw new BookNotFoundException(id)
@@ -123,12 +126,37 @@ export class BookService {
     return book
   }
 
+  async getById(
+    currentUserId: number,
+    id: number,
+  ): Promise<BookEntityWithInFavoritesInterface> {
+    const book = await this.bookRepository.findOneBy({ id })
+    if (!book) {
+      throw new BookNotFoundException(id)
+    }
+
+    let inFavorites = false
+
+    if (currentUserId) {
+      const user = await this.userRepository.findOne({
+        where: { id: currentUserId },
+        relations: ['favorites'],
+      })
+      const favoritesUserBookIds = user.favorites.map((book) => book.id)
+
+      inFavorites = favoritesUserBookIds.includes(book.id)
+    }
+
+    const newBook = { ...book, inFavorites }
+    return newBook
+  }
+
   async remove(currentUser: number, id: number): Promise<number> {
-    const entity = await this.getById(id)
+    const entity = await this.getOne(id)
 
     if ((await this.checkPermission(currentUser, entity.owner.id)) === true) {
-      const book = await this.bookRepository.remove(entity)
-      return book.id
+      await this.bookRepository.remove(entity)
+      return id
     }
   }
 
@@ -137,7 +165,7 @@ export class BookService {
     id: number,
     payload: UpdateBookDto,
   ): Promise<number> {
-    const entity = await this.getById(id)
+    const entity = await this.getOne(id)
 
     if (await this.checkPermission(currentUser, entity.owner.id)) {
       Object.assign(entity, payload)
@@ -155,7 +183,7 @@ export class BookService {
   }
 
   async addToFavorites(currentUserId: number, bookId: number): Promise<number> {
-    const book = await this.getById(bookId)
+    const book = await this.getOne(bookId)
     const user = await this.userRepository.findOne({
       where: { id: currentUserId },
       relations: ['favorites'],
@@ -181,7 +209,7 @@ export class BookService {
     currentUserId: number,
     bookId: number,
   ): Promise<number> {
-    const book = await this.getById(bookId)
+    const book = await this.getOne(bookId)
     const user = await this.userRepository.findOne({
       where: { id: currentUserId },
       relations: ['favorites'],
