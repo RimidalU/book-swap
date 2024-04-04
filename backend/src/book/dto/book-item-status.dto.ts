@@ -24,6 +24,6 @@ export class BookItemStatusDto {
   @ApiProperty({ description: 'Borrower info' })
   readonly borrower: BorrowerInfo
 
-  // @ApiProperty({description: 'Borrowers Queue' })  TODO: add borrowersQueue
-  // readonly borrowersQueue: BorrowerInfo[]
+  @ApiProperty({ description: 'Borrowers Queue' })
+  readonly borrowersQueue: BorrowerInfo[]
 }
