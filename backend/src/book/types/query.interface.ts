@@ -5,6 +5,5 @@ export interface QueryInterface {
   name?: string
   author?: string
   tag?: string
-  inFavorites?: boolean
-  selectUser?: string
+  selectedUser?: string
 }
