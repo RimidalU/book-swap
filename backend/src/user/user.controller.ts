@@ -25,6 +25,7 @@ import { JwtAuthGuard } from '@src/auth/jwt-auth.guard'
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiNotAcceptableResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -32,6 +33,8 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
+import { NotAcceptableException } from '@nestjs/common/exceptions/not-acceptable.exception'
+import { UserInfo } from '@src/user/decorators/user-info.decorator'
 
 @Controller('user')
 @ApiTags('User routes')
@@ -60,6 +63,7 @@ export class UserController {
   @ApiOperation({ summary: 'Update User by id' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiNotAcceptableResponse({ description: 'Not Acceptable' })
   @ApiOkResponse({
     description: 'User Updated',
     type: UserConfirmationResponseDto,
@@ -67,7 +71,12 @@ export class UserController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() payload: UpdateUserDto,
+    @UserInfo('id') currentUserId: number,
   ): Promise<UserConfirmationResponseDto> {
+    if (id !== currentUserId) {
+      throw new NotAcceptableException()
+    }
+
     const userId = await this.userService.update(id, payload)
 
     return this.buildUserConfirmationResponse(userId)
@@ -118,6 +127,7 @@ export class UserController {
   @ApiOperation({ summary: 'Remove User' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiNotAcceptableResponse({ description: 'Not Acceptable' })
   @ApiResponse({
     status: 200,
     description: 'User removed',
@@ -125,7 +135,12 @@ export class UserController {
   })
   async remove(
     @Param('id', ParseIntPipe) id: number,
+    @UserInfo('id') currentUserId: number,
   ): Promise<UserConfirmationResponseDto> {
+    if (id !== currentUserId) {
+      throw new NotAcceptableException()
+    }
+
     const userId = await this.userService.remove(id)
 
     return this.buildUserConfirmationResponse(userId)
