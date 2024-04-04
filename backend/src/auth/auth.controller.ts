@@ -26,7 +26,7 @@ export class AuthController {
     type: LoginResponseDto,
   })
   async login(
-    @Body() createCatDto: ValidateUserDto,
+    @Body() createUserDto: ValidateUserDto,
     @Request() req,
   ): Promise<LoginResponseDto> {
     return this.authService.login(req.user)
