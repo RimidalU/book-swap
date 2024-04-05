@@ -10,7 +10,12 @@ import {
   Query,
 } from '@nestjs/common'
 import { TagService } from './tag.service'
-import { CreateTagDto } from './dto'
+import {
+  CreateTagDto,
+  TagItemDto,
+  TagResponseDto,
+  TagsResponseDto,
+} from './dto'
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -24,8 +29,8 @@ import {
 } from '@nestjs/swagger'
 import { JwtAuthGuard } from '@src/auth/jwt-auth.guard'
 import { TagConfirmationResponseDto } from '@src/tag/dto'
-import { BookResponseDto, BooksResponseDto } from '@src/book/dto'
 import { TagsQueryInterface } from '@src/tag/types'
+import { TagEntity } from './entities'
 
 @ApiTags('Tag routes')
 @Controller('tag')
@@ -58,11 +63,15 @@ export class TagController {
   @ApiResponse({
     status: 200,
     description: 'The found records',
-    type: BooksResponseDto,
+    type: TagsResponseDto,
   })
   @ApiQuery({ name: 'name', required: false, description: 'Tag name' })
-  async getAll(@Query() query: TagsQueryInterface) {
-    return await this.tagService.findAll(query)
+  async getAll(@Query() query: TagsQueryInterface): Promise<TagsResponseDto> {
+    const tags = await this.tagService.findAll(query)
+
+    return {
+      tags: tags.map((tag) => this.buildTagResponse(tag)),
+    }
   }
 
   @ApiBearerAuth()
@@ -74,10 +83,16 @@ export class TagController {
   @ApiResponse({
     status: 200,
     description: 'The found record',
-    type: BookResponseDto,
+    type: TagResponseDto,
   })
-  async getById(@Param('id') id: string) {
-    return await this.tagService.getById(+id)
+  async getById(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<TagResponseDto> {
+    const tag = await this.tagService.getById(id)
+
+    return {
+      tag: this.buildTagResponse(tag),
+    }
   }
 
   @ApiBearerAuth()
@@ -106,6 +121,15 @@ export class TagController {
     return {
       tag: {
         itemId: tagId,
+      },
+    }
+  }
+
+  private buildTagResponse(tag: TagEntity): TagItemDto {
+    return {
+      itemId: tag.id,
+      item: {
+        name: tag.name,
       },
     }
   }
