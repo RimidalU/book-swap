@@ -89,7 +89,6 @@ export class BookController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @Get()
   @ApiOperation({ summary: 'Get All Books' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })

@@ -1,1 +1,1 @@
-export * from './user-item.mock'
+export * from './tag-item.mock'

@@ -1,11 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { TagService } from './tag.service'
 import { DataSource, Repository } from 'typeorm'
-import { TagEntity } from '@src/tag/entities'
 import { getRepositoryToken } from '@nestjs/typeorm'
-import { tagItem } from '@src/tag/mocks/tag-item.mock'
-import { userItem } from '@src/user/mocks'
+
+import { TagService } from './tag.service'
+
+import { TagEntity } from '@src/tag/entities'
 import { TagNotFoundException } from '@src/tag/exceptions'
+
+import { tagItem } from '@src/tag/mocks'
 
 describe('TagService', () => {
   let service: TagService
@@ -22,16 +24,8 @@ describe('TagService', () => {
           provide: TAG_REPOSITORY_TOKEN,
           useValue: {
             save: jest.fn().mockReturnValue(tagItem),
-            findAll: jest.fn().mockReturnValue([tagItem]),
             findOneBy: jest.fn().mockReturnValue(tagItem),
             remove: jest.fn().mockReturnValue(tagItem),
-
-            createQueryBuilder: jest.fn(() => ({
-              where: jest.fn().mockReturnThis(),
-              setParameter: jest.fn().mockReturnThis(),
-              leftJoinAndSelect: jest.fn().mockReturnThis(),
-              getOne: jest.fn().mockReturnThis(),
-            })),
           },
         },
         {
@@ -73,13 +67,10 @@ describe('TagService', () => {
 
   describe('getById method', () => {
     it('the tag with correct id should be returned', async () => {
-      expect(await service.getById(tagItem.id)).toEqual({
-        id: 11,
-        name: 'User Name',
-      })
+      expect(await service.getById(tagItem.id)).toEqual(tagItem)
 
       expect(tagRepository.findOneBy).toHaveBeenCalledWith({
-        id: userItem.id,
+        id: tagItem.id,
       })
     })
 
