@@ -10,6 +10,7 @@ import { AppController } from '@src/app.controller'
 import { AppService } from '@src/app.service'
 import { AuthMiddleware, AuthModule } from './auth'
 import { JwtModule } from '@nestjs/jwt'
+import { TagModule } from './tag/tag.module'
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { JwtModule } from '@nestjs/jwt'
     UserModule,
     AuthModule,
     JwtModule,
+    TagModule,
   ],
   controllers: [AppController],
   providers: [AppService],
