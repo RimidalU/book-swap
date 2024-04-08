@@ -1,0 +1,56 @@
+# Book
+
+### Get All Books
+
+GET localhost:3001/book
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6IlVzZXIgTmFtZSIsImVtYWlsIjoidXNlckBlbWRhaWwuY29tIiwiaWF0IjoxNzEyMDQ5NzM1LCJleHAiOjE3MTIyMjI1MzV9.c8lTtpNnGJ_PA0ie8yue3sYM5WpgAAsagESDIcF_Vdo
+
+### Get One Book
+
+GET localhost:3001/book/53
+
+### Create Book
+
+POST localhost:3001/book
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6IlVzZXIgTmFtZSIsImVtYWlsIjoidXNlckBlbWRhaWwuY29tIiwiaWF0IjoxNzExOTg2OTE0LCJleHAiOjE3MTIxNTk3MTR9.bMO0mE_9ecfTjxQZ2UsGL736pCpN_14GxYyYJQ_I0Fw
+
+{
+  "name": "Book Name",
+  "author": "Book Author",
+  "year": 2020,
+  "condition": 2
+}
+
+### Update Book
+
+PATCH localhost:3001/book/5
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IlVzZXIgTmFtZSIsImVtYWlsIjoidXNlckBlbWFpbC5jb20iLCJpYXQiOjE3MTE5ODY2NzgsImV4cCI6MTcxMjE1OTQ3OH0.E40sqDH8yKOh-MPNf3qtJ2gnZcSj3IkZAtOMDGy6hWM
+
+{
+  "year": 11111,
+  "condition": 5
+}
+
+### Remove Book
+
+DELETE localhost:3001/book/6
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6IlVzZXIgTmFtZSIsImVtYWlsIjoidXNlckBlbWRhaWwuY29tIiwiaWF0IjoxNzExOTg2OTE0LCJleHAiOjE3MTIxNTk3MTR9.bMO0mE_9ecfTjxQZ2UsGL736pCpN_14GxYyYJQ_I0Fw
+
+### Search Books with owner id
+
+GET localhost:3001/book/search?owner=acb2b5b7-3102-4733-877d-a7984215a268
+
+
+### Add Book to favorites
+
+POST localhost:3001/book/favorites/9
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6IlVzZXIgTmFtZSIsImVtYWlsIjoidXNlckBlbWRhaWwuY29tIiwiaWF0IjoxNzEyMDQ5NzM1LCJleHAiOjE3MTIyMjI1MzV9.c8lTtpNnGJ_PA0ie8yue3sYM5WpgAAsagESDIcF_Vdo
+
+
+### Remove Book from favorites
+
+DELETE localhost:3001/book/favorites/9
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6IlVzZXIgTmFtZSIsImVtYWlsIjoidXNlckBlbWRhaWwuY29tIiwiaWF0IjoxNzEyMDQ5NzM1LCJleHAiOjE3MTIyMjI1MzV9.c8lTtpNnGJ_PA0ie8yue3sYM5WpgAAsagESDIcF_Vdo

@@ -1,0 +1,88 @@
+import { Test, TestingModule } from '@nestjs/testing'
+
+import { BookController } from './book.controller'
+import { BookService } from './book.service'
+
+import { bookItem, newItemInfo } from './mocks'
+
+describe('BookController', () => {
+  let controller: BookController
+  let service: BookService
+  const newBookInfo = {
+    description: 'New description',
+    year: 1990,
+  }
+
+  beforeEach(async () => {
+    const moduleRef: TestingModule = await Test.createTestingModule({
+      controllers: [BookController],
+      providers: [
+        {
+          provide: BookService,
+          useValue: {
+            create: jest.fn().mockReturnValue(bookItem.id),
+            getAll: jest.fn().mockReturnValue([bookItem]),
+            getById: jest.fn().mockReturnValue(bookItem),
+            remove: jest.fn().mockReturnValue(bookItem.id),
+            update: jest.fn().mockReturnValue(bookItem.id),
+          },
+        },
+      ],
+    }).compile()
+
+    service = moduleRef.get(BookService)
+    controller = moduleRef.get(BookController)
+  })
+
+  it('controller should be defined', () => {
+    expect(controller).toBeDefined()
+  })
+
+  it('service should be defined', () => {
+    expect(service).toBeDefined()
+  })
+
+  describe('create book method', () => {
+    it('check the book created', async () => {
+      expect(await controller.create(newItemInfo)).toBe(bookItem.id)
+
+      expect(service.create).toHaveBeenCalledWith({
+        ...newItemInfo,
+      })
+    })
+  })
+
+  describe('get all books method', () => {
+    it('check returned array of books', async () => {
+      expect(await controller.getAll()).toEqual([bookItem])
+
+      expect(service.getAll).toHaveBeenCalledWith()
+    })
+  })
+
+  describe('getById book method', () => {
+    it('check returned books with current id', async () => {
+      expect(await controller.getById(bookItem.id)).toEqual(bookItem)
+
+      expect(service.getById).toHaveBeenCalledWith(bookItem.id)
+    })
+  })
+
+  describe('remove book method', () => {
+    it('check returned book id', async () => {
+      expect(await controller.remove(bookItem.id)).toEqual(bookItem.id)
+
+      expect(service.remove).toHaveBeenCalledWith(bookItem.id)
+    })
+  })
+
+  describe('update book method', () => {
+    it('check returned updated book with current id', async () => {
+      expect(await controller.update(bookItem.id, newBookInfo)).toEqual(
+        bookItem.id,
+      )
+
+      expect(service.update).toHaveBeenCalledWith(bookItem.id, newBookInfo)
+    })
+  })
+})
