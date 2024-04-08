@@ -39,7 +39,7 @@ export class BookService {
     query: QueryInterface,
   ): Promise<BooksResponseInterface> {
     const { limit = 20, offset = 0 } = query
-    let favoritesUserBookIds: number[]
+    let favoritesUserBookIds: number[] = []
 
     const queryBuilder = await this.dataSource
       .getRepository(BookEntity)
@@ -62,7 +62,9 @@ export class BookService {
     if (query.selectedUser) {
       const user = await this.userRepository.findOne({
         where: { name: query.selectedUser },
-        relations: ['favorites'],
+        relations: {
+          favorites: true,
+        },
       })
       if (user) {
         favoritesUserBookIds = user.favorites.map((book) => book.id)
@@ -98,7 +100,9 @@ export class BookService {
     if (currentUserId) {
       const user = await this.userRepository.findOne({
         where: { id: currentUserId },
-        relations: ['favorites'],
+        relations: {
+          favorites: true,
+        },
       })
       favoritesUserBookIds = user.favorites.map((book) => book.id)
     }
