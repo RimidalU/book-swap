@@ -79,7 +79,7 @@ Improvement:
 
 ## License
 
-This project is open source and available under the [BSD 3-Clause](../LICENSE).
+This project is open source and available under the [BSD 3-Clause](../LICENSE.md).
 
 ## Contact
 
