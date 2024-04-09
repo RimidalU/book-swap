@@ -50,6 +50,10 @@ export class BookEntity {
   @Column('int2', { default: 0 })
   likes: number
 
+  @IsEmpty()
+  @Column('simple-array', { default: [] })
+  tags?: string[]
+
   @CreateDateColumn({ type: 'timestamp with time zone' })
   createdAt: Date
 
