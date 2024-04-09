@@ -40,9 +40,11 @@ import {
 } from '@src/book/types'
 import { GetAllSwaggerDecorator } from '@src/book/decorators/get-all-swagger.decorator'
 import {
-  CreateSwaggerDecorator, GetByAdSwaggerDecorator,
+  CreateSwaggerDecorator,
+  GetByAdSwaggerDecorator,
   UpdateSwaggerDecorator,
 } from '@src/book/decorators'
+import { RemoveSwaggerDecorator } from '@src/book/decorators/remove-swagger.decorator'
 
 @ApiTags('Book routes')
 @Controller('book')
@@ -103,18 +105,9 @@ export class BookController {
     }
   }
 
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  @ApiOperation({ summary: 'Remove Book' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiNotAcceptableResponse({ description: 'Not Acceptable' })
-  @ApiResponse({
-    status: 200,
-    description: 'Book removed',
-    type: BookConfirmationResponseDto,
-  })
+  @RemoveSwaggerDecorator()
   async remove(
     @UserInfo('id') currentUserId: number,
     @Param('id', ParseIntPipe) id: number,
