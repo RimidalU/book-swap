@@ -35,7 +35,7 @@ export function GetAllSwaggerDecorator() {
     }),
     ApiQuery({ name: 'name', required: false, description: 'Book name' }),
     ApiQuery({ name: 'author', required: false, description: 'Author name' }),
-    ApiQuery({ name: 'tag', required: false, description: 'Tags' }),
+    ApiQuery({ name: 'tag', required: false, description: 'Tags of Book' }),
     ApiQuery({
       name: 'selectedUser',
       required: false,

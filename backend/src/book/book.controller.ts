@@ -146,6 +146,7 @@ export class BookController {
         year: book.year,
         description: book.description,
         condition: book.condition,
+        tags: book.tags,
         likes: book.likes,
         ownerId: book.owner.id,
         ownerAvatar: book.owner.avatar,
