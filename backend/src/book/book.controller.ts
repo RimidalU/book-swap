@@ -40,6 +40,7 @@ import {
 } from '@src/book/types'
 import { GetAllSwaggerDecorator } from '@src/book/decorators/get-all-swagger.decorator'
 import {
+  AddToFavoritesSwaggerDecorator,
   CreateSwaggerDecorator,
   GetByAdSwaggerDecorator,
   UpdateSwaggerDecorator,
@@ -117,18 +118,9 @@ export class BookController {
     return this.buildBookConfirmationResponse(bookId)
   }
 
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post('favorites/:id')
-  @ApiOperation({ summary: 'Add Book to favorites' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiNotAcceptableResponse({ description: 'Not Acceptable' })
-  @ApiResponse({
-    status: 200,
-    description: 'Book added to favorites',
-    type: BookConfirmationResponseDto,
-  })
+  @AddToFavoritesSwaggerDecorator()
   async addToFavorites(
     @UserInfo('id') currentUserId: number,
     @Param('id', ParseIntPipe) bookId: number,
