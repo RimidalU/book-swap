@@ -26,7 +26,6 @@ import { UserInfo } from '@src/user/decorators/user-info.decorator'
 
 import {
   ApiBearerAuth,
-  ApiCreatedResponse,
   ApiNotAcceptableResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -41,22 +40,16 @@ import {
   QueryInterface,
 } from '@src/book/types'
 import { GetAllSwaggerDecorator } from '@src/book/decorators/get-all-swagger.decorator'
+import { CreateSwaggerDecorator } from '@src/book/decorators'
 
 @ApiTags('Book routes')
 @Controller('book')
 export class BookController {
   constructor(private readonly bookService: BookService) {}
 
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post()
-  @ApiOperation({ summary: 'Create Book' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiCreatedResponse({
-    description: 'Book created',
-    type: BookConfirmationResponseDto,
-  })
+  @CreateSwaggerDecorator()
   async create(
     @UserInfo('id') currentUserId: number,
     @Body() payload: CreateBookDto,
