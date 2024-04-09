@@ -4,9 +4,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import { Response, NextFunction } from 'express'
-import { ExpressRequestInterface } from '@src/user/types'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
+import { ExpressRequestType } from '@src/user/types'
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
@@ -14,7 +14,7 @@ export class AuthMiddleware implements NestMiddleware {
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
   ) {}
-  async use(req: ExpressRequestInterface, res: Response, next: NextFunction) {
+  async use(req: ExpressRequestType, res: Response, next: NextFunction) {
     if (!req.headers.authorization) {
       req.user = null
       next()
