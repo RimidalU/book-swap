@@ -86,14 +86,14 @@ export class BookService {
     }
 
     if (query.author) {
-      queryBuilder.andWhere('book.name LIKE :author', {
+      queryBuilder.andWhere('book.author LIKE :author', {
         author: `%${query.author}%`,
       })
     }
 
     if (query.tag) {
-      queryBuilder.andWhere('book.tag LIKE :tag', {
-        tags: `%${query.tag}%`,
+      queryBuilder.andWhere('book.tags LIKE :tag', {
+        tag: `%${query.tag}%`,
       })
     }
 
