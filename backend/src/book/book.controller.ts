@@ -13,6 +13,24 @@ import {
 
 import { BookService } from '@src/book/book.service'
 
+import { JwtAuthGuard } from '@src/auth/jwt-auth.guard'
+import { UserInfo } from '@src/user/decorators/user-info.decorator'
+import { ApiTags } from '@nestjs/swagger'
+import {
+  GetAllSwaggerDecorator,
+  AddToFavoritesSwaggerDecorator,
+  CreateSwaggerDecorator,
+  GetByAdSwaggerDecorator,
+  UpdateSwaggerDecorator,
+  RemoveSwaggerDecorator,
+  RemoveFromFavoritesSwaggerDecorator,
+} from '@src/book/decorators'
+
+import { ShortBookItemDto } from '@src/book/dto'
+import {
+  BookEntityWithInFavoritesInterface,
+  QueryInterface,
+} from '@src/book/types'
 import {
   BookConfirmationResponseDto,
   BookItemDto,
@@ -21,31 +39,6 @@ import {
   CreateBookDto,
   UpdateBookDto,
 } from '@src/book/dto'
-import { JwtAuthGuard } from '@src/auth/jwt-auth.guard'
-import { UserInfo } from '@src/user/decorators/user-info.decorator'
-
-import {
-  ApiBearerAuth,
-  ApiNotAcceptableResponse,
-  ApiNotFoundResponse,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger'
-import { ShortBookItemDto } from '@src/book/dto'
-import {
-  BookEntityWithInFavoritesInterface,
-  QueryInterface,
-} from '@src/book/types'
-import { GetAllSwaggerDecorator } from '@src/book/decorators/get-all-swagger.decorator'
-import {
-  AddToFavoritesSwaggerDecorator,
-  CreateSwaggerDecorator,
-  GetByAdSwaggerDecorator,
-  UpdateSwaggerDecorator,
-} from '@src/book/decorators'
-import { RemoveSwaggerDecorator } from '@src/book/decorators/remove-swagger.decorator'
 
 @ApiTags('Book routes')
 @Controller('book')
@@ -130,18 +123,9 @@ export class BookController {
     return this.buildBookConfirmationResponse(id)
   }
 
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Delete('favorites/:id')
-  @ApiOperation({ summary: 'Remove Book from favorites' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiNotAcceptableResponse({ description: 'Not Acceptable' })
-  @ApiResponse({
-    status: 200,
-    description: 'Book removed to favorites',
-    type: BookConfirmationResponseDto,
-  })
+  @RemoveFromFavoritesSwaggerDecorator()
   async removeFromFavorites(
     @UserInfo('id') currentUserId: number,
     @Param('id', ParseIntPipe) bookId: number,
