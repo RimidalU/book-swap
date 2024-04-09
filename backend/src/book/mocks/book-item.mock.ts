@@ -8,6 +8,7 @@ export const bookItem: BookType = {
   year: 2022,
   description: 'Book Description',
   condition: 4,
+  tags: ['adventure'],
   owner: new UserEntity(),
   isBorrowed: false,
   borrower: null,

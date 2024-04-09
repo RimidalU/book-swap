@@ -13,6 +13,24 @@ import {
 
 import { BookService } from '@src/book/book.service'
 
+import { JwtAuthGuard } from '@src/auth/jwt-auth.guard'
+import { UserInfo } from '@src/user/decorators/user-info.decorator'
+import { ApiTags } from '@nestjs/swagger'
+import {
+  GetAllSwaggerDecorator,
+  AddToFavoritesSwaggerDecorator,
+  CreateSwaggerDecorator,
+  GetByAdSwaggerDecorator,
+  UpdateSwaggerDecorator,
+  RemoveSwaggerDecorator,
+  RemoveFromFavoritesSwaggerDecorator,
+} from '@src/book/decorators'
+
+import { ShortBookItemDto } from '@src/book/dto'
+import {
+  BookEntityWithInFavoritesInterface,
+  QueryInterface,
+} from '@src/book/types'
 import {
   BookConfirmationResponseDto,
   BookItemDto,
@@ -21,42 +39,15 @@ import {
   CreateBookDto,
   UpdateBookDto,
 } from '@src/book/dto'
-import { JwtAuthGuard } from '@src/auth/jwt-auth.guard'
-import { UserInfo } from '@src/user/decorators/user-info.decorator'
-
-import {
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiNotAcceptableResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger'
-import { ShortBookItemDto } from '@src/book/dto'
-import {
-  BookEntityWithInFavoritesInterface,
-  QueryInterface,
-} from '@src/book/types'
 
 @ApiTags('Book routes')
 @Controller('book')
 export class BookController {
   constructor(private readonly bookService: BookService) {}
 
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post()
-  @ApiOperation({ summary: 'Create Book' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiCreatedResponse({
-    description: 'Book created',
-    type: BookConfirmationResponseDto,
-  })
+  @CreateSwaggerDecorator()
   async create(
     @UserInfo('id') currentUserId: number,
     @Body() payload: CreateBookDto,
@@ -66,17 +57,9 @@ export class BookController {
     return this.buildBookConfirmationResponse(bookId)
   }
 
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  @ApiOperation({ summary: 'Update Book by id' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiNotAcceptableResponse({ description: 'Not Acceptable' })
-  @ApiOkResponse({
-    description: 'Book Updated',
-    type: BookConfirmationResponseDto,
-  })
+  @UpdateSwaggerDecorator()
   async update(
     @UserInfo('id') currentUserId: number,
     @Param('id', ParseIntPipe) id: number,
@@ -87,31 +70,9 @@ export class BookController {
     return this.buildBookConfirmationResponse(bookId)
   }
 
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get()
-  @ApiOperation({ summary: 'Get All Books' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiResponse({
-    status: 200,
-    description: 'The found records',
-    type: BooksResponseDto,
-  })
-  @ApiQuery({ name: 'limit', required: false, description: 'Items on page' })
-  @ApiQuery({ name: 'offset', required: false, description: 'Offset on page' })
-  @ApiQuery({
-    name: 'owner',
-    required: false,
-    description: 'Owner name(complete match)',
-  })
-  @ApiQuery({ name: 'name', required: false, description: 'Book name' })
-  @ApiQuery({ name: 'author', required: false, description: 'Author name' })
-  // @ApiQuery({ name: 'tag' ,required: false, description: 'Tags'})                                           TODO: implements tags
-  @ApiQuery({
-    name: 'selectedUser',
-    required: false,
-    description: "Books in this user's favorites",
-  })
+  @GetAllSwaggerDecorator()
   async getAll(
     @UserInfo('id') currentUserId: number,
     @Query() query: QueryInterface,
@@ -124,17 +85,9 @@ export class BookController {
     }
   }
 
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  @ApiOperation({ summary: 'Get Book by id' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiResponse({
-    status: 200,
-    description: 'The found record',
-    type: BookResponseDto,
-  })
+  @GetByAdSwaggerDecorator()
   async getById(
     @Param('id', ParseIntPipe) id: number,
     @UserInfo('id') currentUserId: number,
@@ -146,18 +99,9 @@ export class BookController {
     }
   }
 
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  @ApiOperation({ summary: 'Remove Book' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiNotAcceptableResponse({ description: 'Not Acceptable' })
-  @ApiResponse({
-    status: 200,
-    description: 'Book removed',
-    type: BookConfirmationResponseDto,
-  })
+  @RemoveSwaggerDecorator()
   async remove(
     @UserInfo('id') currentUserId: number,
     @Param('id', ParseIntPipe) id: number,
@@ -167,18 +111,9 @@ export class BookController {
     return this.buildBookConfirmationResponse(bookId)
   }
 
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post('favorites/:id')
-  @ApiOperation({ summary: 'Add Book to favorites' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiNotAcceptableResponse({ description: 'Not Acceptable' })
-  @ApiResponse({
-    status: 200,
-    description: 'Book added to favorites',
-    type: BookConfirmationResponseDto,
-  })
+  @AddToFavoritesSwaggerDecorator()
   async addToFavorites(
     @UserInfo('id') currentUserId: number,
     @Param('id', ParseIntPipe) bookId: number,
@@ -188,18 +123,9 @@ export class BookController {
     return this.buildBookConfirmationResponse(id)
   }
 
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Delete('favorites/:id')
-  @ApiOperation({ summary: 'Remove Book from favorites' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiNotAcceptableResponse({ description: 'Not Acceptable' })
-  @ApiResponse({
-    status: 200,
-    description: 'Book removed to favorites',
-    type: BookConfirmationResponseDto,
-  })
+  @RemoveFromFavoritesSwaggerDecorator()
   async removeFromFavorites(
     @UserInfo('id') currentUserId: number,
     @Param('id', ParseIntPipe) bookId: number,
@@ -220,6 +146,7 @@ export class BookController {
         year: book.year,
         description: book.description,
         condition: book.condition,
+        tags: book.tags,
         likes: book.likes,
         ownerId: book.owner.id,
         ownerAvatar: book.owner.avatar,

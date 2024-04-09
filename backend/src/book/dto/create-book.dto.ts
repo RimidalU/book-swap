@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator'
+import { IsArray, IsNotEmpty, IsNumber, IsString } from 'class-validator'
 import { IsOptional } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
@@ -43,4 +43,14 @@ export class CreateBookDto {
     description: 'Book condition(0-10)',
   })
   readonly condition: number
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  @ApiProperty({
+    isArray: true,
+    example: '["adventure", "wolf"]',
+    description: 'Tag Names',
+  })
+  readonly tags?: string[]
 }
