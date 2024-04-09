@@ -31,7 +31,6 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiQuery,
   ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -41,6 +40,7 @@ import {
   BookEntityWithInFavoritesInterface,
   QueryInterface,
 } from '@src/book/types'
+import { GetAllSwaggerDecorator } from '@src/book/decorators/get-all-swagger.decorator'
 
 @ApiTags('Book routes')
 @Controller('book')
@@ -87,31 +87,9 @@ export class BookController {
     return this.buildBookConfirmationResponse(bookId)
   }
 
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get()
-  @ApiOperation({ summary: 'Get All Books' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiResponse({
-    status: 200,
-    description: 'The found records',
-    type: BooksResponseDto,
-  })
-  @ApiQuery({ name: 'limit', required: false, description: 'Items on page' })
-  @ApiQuery({ name: 'offset', required: false, description: 'Offset on page' })
-  @ApiQuery({
-    name: 'owner',
-    required: false,
-    description: 'Owner name(complete match)',
-  })
-  @ApiQuery({ name: 'name', required: false, description: 'Book name' })
-  @ApiQuery({ name: 'author', required: false, description: 'Author name' })
-  // @ApiQuery({ name: 'tag' ,required: false, description: 'Tags'})                                           TODO: implements tags
-  @ApiQuery({
-    name: 'selectedUser',
-    required: false,
-    description: "Books in this user's favorites",
-  })
+  @GetAllSwaggerDecorator()
   async getAll(
     @UserInfo('id') currentUserId: number,
     @Query() query: QueryInterface,
