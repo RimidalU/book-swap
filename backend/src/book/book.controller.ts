@@ -28,7 +28,6 @@ import {
   ApiBearerAuth,
   ApiNotAcceptableResponse,
   ApiNotFoundResponse,
-  ApiOkResponse,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -40,7 +39,10 @@ import {
   QueryInterface,
 } from '@src/book/types'
 import { GetAllSwaggerDecorator } from '@src/book/decorators/get-all-swagger.decorator'
-import { CreateSwaggerDecorator } from '@src/book/decorators'
+import {
+  CreateSwaggerDecorator, GetByAdSwaggerDecorator,
+  UpdateSwaggerDecorator,
+} from '@src/book/decorators'
 
 @ApiTags('Book routes')
 @Controller('book')
@@ -59,17 +61,9 @@ export class BookController {
     return this.buildBookConfirmationResponse(bookId)
   }
 
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  @ApiOperation({ summary: 'Update Book by id' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiNotAcceptableResponse({ description: 'Not Acceptable' })
-  @ApiOkResponse({
-    description: 'Book Updated',
-    type: BookConfirmationResponseDto,
-  })
+  @UpdateSwaggerDecorator()
   async update(
     @UserInfo('id') currentUserId: number,
     @Param('id', ParseIntPipe) id: number,
@@ -95,17 +89,9 @@ export class BookController {
     }
   }
 
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  @ApiOperation({ summary: 'Get Book by id' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiResponse({
-    status: 200,
-    description: 'The found record',
-    type: BookResponseDto,
-  })
+  @GetByAdSwaggerDecorator()
   async getById(
     @Param('id', ParseIntPipe) id: number,
     @UserInfo('id') currentUserId: number,
