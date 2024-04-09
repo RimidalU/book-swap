@@ -4,8 +4,8 @@ import { Repository } from 'typeorm'
 
 import { UserEntity } from '@src/user/entities'
 
-import { UserNotFoundException } from '@src/user/exceptions'
 import { ProfileType } from '@src/profile/types'
+import { ProfileNotFoundException } from '@src/profile/exceptions'
 
 @Injectable()
 export class ProfileService {
@@ -17,7 +17,7 @@ export class ProfileService {
   async getProfile(currentUserId: number, id: number): Promise<ProfileType> {
     const user = await this.userRepository.findOneBy({ id })
     if (!user) {
-      throw new UserNotFoundException({ id })
+      throw new ProfileNotFoundException({ id })
     }
 
     const newProfile = { ...user, following: false }
