@@ -11,6 +11,7 @@ import { AppService } from '@src/app.service'
 import { AuthMiddleware, AuthModule } from './auth'
 import { JwtModule } from '@nestjs/jwt'
 import { TagModule } from './tag/tag.module'
+import { ProfileModule } from './profile/profile.module'
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { TagModule } from './tag/tag.module'
     AuthModule,
     JwtModule,
     TagModule,
+    ProfileModule,
   ],
   controllers: [AppController],
   providers: [AppService],
