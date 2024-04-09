@@ -2,6 +2,7 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 
 import { UpdateBookDto } from '@src/book/dto/update-book.dto'
+import { CreateBookDto } from '@src/book/dto/create-book.dto'
 
 describe('update-book.dto', () => {
   let dto
@@ -15,10 +16,7 @@ describe('update-book.dto', () => {
       year: '',
       description: '',
       condition: '',
-      owner: '',
-      isBorrowed: '',
-      borrower: '',
-      borrowersQueue: [],
+      tags: [],
     }
   })
 
@@ -95,51 +93,26 @@ describe('update-book.dto', () => {
     expect(errors.map((err) => err.property).includes('condition')).toBeFalsy()
   })
 
-  it('check throw error if the condition field is not a number', async () => {
-    dto.owner = stringValue
-    const ofImportDTO = plainToInstance(UpdateBookDto, dto)
+  it('Each element in tags field is not string', async () => {
+    dto.tags = [stringValue, numberValue]
+    const ofImportDTO = plainToInstance(CreateBookDto, dto)
     const errors = await validate(ofImportDTO)
-    expect(errors.map((err) => err.property).includes('owner')).toBeTruthy()
+    expect(dto.tags.length).not.toBe(0)
+    expect(errors.map((err) => err.property).includes('tags')).toBeTruthy()
   })
 
-  it('owner field is number', async () => {
-    dto.owner = numberValue
-    const ofImportDTO = plainToInstance(UpdateBookDto, dto)
+  it('Each element in tags field is empty', async () => {
+    dto.tags = []
+    const ofImportDTO = plainToInstance(CreateBookDto, dto)
     const errors = await validate(ofImportDTO)
-    expect(errors.map((err) => err.property).includes('owner')).toBeFalsy()
+    expect(dto.tags.length).toBe(0)
+    expect(errors.map((err) => err.property).includes('tags')).toBeFalsy()
   })
 
-  it('check throw error if the condition field is not a boolean', async () => {
-    const ofImportDTO = plainToInstance(UpdateBookDto, dto)
+  it('Each element in tags field is string', async () => {
+    dto.tags = [stringValue, stringValue]
+    const ofImportDTO = plainToInstance(CreateBookDto, dto)
     const errors = await validate(ofImportDTO)
-    expect(
-      errors.map((err) => err.property).includes('isBorrowed'),
-    ).toBeTruthy()
-  })
-
-  it('isBorrowed field is boolean', async () => {
-    dto.isBorrowed = true
-    const ofImportDTO = plainToInstance(UpdateBookDto, dto)
-    const errors = await validate(ofImportDTO)
-    expect(errors.map((err) => err.property).includes('isBorrowed')).toBeFalsy()
-  })
-
-  it('Each element in borrowersQueue field is not number', async () => {
-    dto.borrowersQueue = [stringValue, numberValue]
-    const ofImportDTO = plainToInstance(UpdateBookDto, dto)
-    const errors = await validate(ofImportDTO)
-    expect(dto.borrowersQueue.lenth).not.toBe(0)
-    expect(
-      errors.map((err) => err.property).includes('borrowersQueue'),
-    ).toBeTruthy()
-  })
-
-  it('Each element in borrowersQueue field is number', async () => {
-    dto.borrowersQueue = [numberValue, numberValue]
-    const ofImportDTO = plainToInstance(UpdateBookDto, dto)
-    const errors = await validate(ofImportDTO)
-    expect(
-      errors.map((err) => err.property).includes('borrowersQueue'),
-    ).toBeFalsy()
+    expect(errors.map((err) => err.property).includes('tags')).toBeFalsy()
   })
 })

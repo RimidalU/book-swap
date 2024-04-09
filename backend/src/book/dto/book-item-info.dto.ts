@@ -27,6 +27,12 @@ export class BookItemInfoDto {
   readonly description: string
 
   @ApiProperty({
+    example: '["adventure", "wolf"]',
+    description: 'Tag Names',
+  })
+  readonly tags: string[]
+
+  @ApiProperty({
     example: 6,
     description: 'Book condition(0-10)',
   })
