@@ -13,6 +13,7 @@ import {
 } from '@src/book/types'
 import { BooksResponseInterface } from '@src/book/types/books-response.interface'
 import { UserEntity } from '@src/user/entities'
+import { UserNotFoundException } from '@src/user/exceptions'
 
 @Injectable()
 export class BookService {
@@ -232,5 +233,56 @@ export class BookService {
       return bookId
     }
     return bookId
+  }
+
+  async myFeed(
+    currentUserId: number,
+    query: QueryInterface,
+  ): Promise<BooksResponseInterface> {
+    const { limit = 20, offset = 0 } = query
+
+    const currentUser = await this.userRepository.findOne({
+      where: { id: currentUserId },
+      relations: ['subscriptions', 'favorites'],
+    })
+
+    if (!currentUser) {
+      throw new UserNotFoundException({ currentUserId })
+    }
+
+    const subscriptionsUserIds = currentUser.subscriptions.map(
+      (user) => user.id,
+    )
+
+    if (subscriptionsUserIds.length === 0) {
+      return { books: [], count: 0 }
+    }
+
+    const favoritesUserBookIds = currentUser.favorites.map((book) => book.id)
+
+    const queryBuilder = await this.dataSource
+      .getRepository(BookEntity)
+      .createQueryBuilder('book')
+      .leftJoinAndSelect('book.owner', 'books')
+
+    queryBuilder.where('book.ownerId IN (:...ids)', {
+      ids: subscriptionsUserIds,
+    })
+
+    queryBuilder.orderBy('book.createdAt', 'DESC')
+
+    queryBuilder.limit(limit)
+    queryBuilder.offset(offset)
+
+    const books = await queryBuilder.getMany()
+    const count = await queryBuilder.getCount()
+
+    const favoritesBook = books.map((book) => {
+      const inFavorites = favoritesUserBookIds.includes(book.id)
+
+      return { ...book, inFavorites }
+    })
+
+    return { books: favoritesBook, count }
   }
 }

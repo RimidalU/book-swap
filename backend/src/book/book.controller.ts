@@ -24,6 +24,7 @@ import {
   UpdateSwaggerDecorator,
   RemoveSwaggerDecorator,
   RemoveFromFavoritesSwaggerDecorator,
+  MyFeedSwaggerDecorator,
 } from '@src/book/decorators'
 
 import { ShortBookItemDto } from '@src/book/dto'
@@ -78,6 +79,21 @@ export class BookController {
     @Query() query: QueryInterface,
   ): Promise<BooksResponseDto> {
     const { books, count } = await this.bookService.getAll(currentUserId, query)
+
+    return {
+      books: books.map((book) => this.buildShortBookResponse(book)),
+      count,
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('feed')
+  @MyFeedSwaggerDecorator()
+  async myFeed(
+    @UserInfo('id') currentUserId: number,
+    @Query() query: QueryInterface,
+  ): Promise<BooksResponseDto> {
+    const { books, count } = await this.bookService.myFeed(currentUserId, query)
 
     return {
       books: books.map((book) => this.buildShortBookResponse(book)),
