@@ -67,4 +67,8 @@ export class UserEntity {
   @ManyToMany(() => BookEntity)
   @JoinTable()
   favorites: BookEntity[]
+
+  @ManyToMany(() => UserEntity)
+  @JoinTable()
+  subscriptions: UserEntity[]
 }
