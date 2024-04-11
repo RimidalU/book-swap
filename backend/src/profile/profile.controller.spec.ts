@@ -18,6 +18,8 @@ describe('ProfileController', () => {
           provide: ProfileService,
           useValue: {
             getProfile: jest.fn().mockReturnValue(profileItem),
+            followProfile: jest.fn().mockReturnValue(profileItem.id),
+            unFollowProfile: jest.fn().mockReturnValue(profileItem.id),
           },
         },
       ],
@@ -38,7 +40,7 @@ describe('ProfileController', () => {
   describe('get-profile method', () => {
     it('check returned profile with current id', async () => {
       expect(
-        await controller.getProfile(profileItem.id, currentUserId),
+        await controller.getProfile(currentUserId, profileItem.id),
       ).toEqual({
         profile: {
           itemId: profileItem.id,
@@ -52,8 +54,42 @@ describe('ProfileController', () => {
       })
 
       expect(service.getProfile).toHaveBeenCalledWith(
-        currentUserId,
         profileItem.id,
+        currentUserId,
+      )
+    })
+  })
+
+  describe('follow-profile method', () => {
+    it('check returned profile id with current request', async () => {
+      expect(
+        await controller.followProfile(currentUserId, profileItem.id),
+      ).toEqual({
+        profile: {
+          itemId: profileItem.id,
+        },
+      })
+
+      expect(service.followProfile).toHaveBeenCalledWith(
+        profileItem.id,
+        currentUserId,
+      )
+    })
+  })
+
+  describe('unfollow-profile method', () => {
+    it('check returned profile id with current request', async () => {
+      expect(
+        await controller.unFollowProfile(currentUserId, profileItem.id),
+      ).toEqual({
+        profile: {
+          itemId: profileItem.id,
+        },
+      })
+
+      expect(service.unFollowProfile).toHaveBeenCalledWith(
+        profileItem.id,
+        currentUserId,
       )
     })
   })
