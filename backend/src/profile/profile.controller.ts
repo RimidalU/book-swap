@@ -77,7 +77,7 @@ export class ProfileController {
         name: profile.name,
         bio: profile.bio,
         avatar: profile.avatar,
-        following: profile.following,
+        inSubscriptions: profile.inSubscriptions,
       },
     }
   }

@@ -1,3 +1,3 @@
 import { UserType } from '@src/user/types'
 
-export type ProfileType = UserType & { following?: boolean }
+export type ProfileType = UserType & { inSubscriptions?: boolean }
