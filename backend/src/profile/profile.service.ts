@@ -5,7 +5,10 @@ import { Repository } from 'typeorm'
 import { UserEntity } from '@src/user/entities'
 
 import { ProfileType } from '@src/profile/types'
-import { ProfileNotFoundException } from '@src/profile/exceptions'
+import {
+  ImpossibleSubscribeException,
+  ProfileNotFoundException,
+} from '@src/profile/exceptions'
 
 @Injectable()
 export class ProfileService {
@@ -22,5 +25,38 @@ export class ProfileService {
 
     const newProfile = { ...user, following: false }
     return newProfile
+  }
+
+  async followProfile(currentUserId: number, id: number): Promise<number> {
+    if (currentUserId === id) {
+      throw new ImpossibleSubscribeException({ id })
+    }
+
+    const currentUser = await this.userRepository.findOne({
+      where: { id: currentUserId },
+      relations: ['subscriptions'],
+    })
+
+    if (!currentUser) {
+      throw new ProfileNotFoundException({ id })
+    }
+
+    const isNotSubscriptions =
+      currentUser.subscriptions.findIndex(
+        (userInSubscriptions) => userInSubscriptions.id === id,
+      ) === -1
+
+    if (isNotSubscriptions) {
+      const userForSubscriptions = await this.userRepository.findOneBy({ id })
+
+      currentUser.subscriptions.push(userForSubscriptions)
+      await this.userRepository.save(currentUser)
+    }
+
+    return id
+  }
+
+  async unFollowProfile(currentUserId: number, id: number): Promise<number> {
+    return id
   }
 }
