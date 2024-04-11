@@ -23,7 +23,19 @@ export class ProfileService {
       throw new ProfileNotFoundException({ id })
     }
 
-    const newProfile = { ...user, following: false }
+    const currentUser = await this.userRepository.findOne({
+      where: { id: currentUserId },
+      relations: {
+        subscriptions: true,
+      },
+    })
+
+    const inSubscriptions =
+      currentUser.subscriptions.findIndex(
+        (userInSubscriptions) => userInSubscriptions.id === id,
+      ) !== -1
+
+    const newProfile = { ...user, inSubscriptions }
     return newProfile
   }
 
@@ -40,7 +52,6 @@ export class ProfileService {
       currentUser.subscriptions.push(userForSubscriptions)
       await this.userRepository.save(currentUser)
     }
-
     return id
   }
 
@@ -53,7 +64,6 @@ export class ProfileService {
       currentUser.subscriptions.splice(userIndex, 1)
       await this.userRepository.save(currentUser)
     }
-
     return id
   }
 
