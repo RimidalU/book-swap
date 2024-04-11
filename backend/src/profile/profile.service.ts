@@ -28,19 +28,7 @@ export class ProfileService {
   }
 
   async followProfile(currentUserId: number, id: number): Promise<number> {
-    if (currentUserId === id) {
-      throw new ImpossibleSubscribeException({ id })
-    }
-
-    const currentUser = await this.userRepository.findOne({
-      where: { id: currentUserId },
-      relations: ['subscriptions'],
-    })
-
-    if (!currentUser) {
-      throw new ProfileNotFoundException({ id })
-    }
-
+    const currentUser = await this.getCurrentUser(currentUserId, id)
     const isNotSubscriptions =
       currentUser.subscriptions.findIndex(
         (userInSubscriptions) => userInSubscriptions.id === id,
@@ -57,6 +45,30 @@ export class ProfileService {
   }
 
   async unFollowProfile(currentUserId: number, id: number): Promise<number> {
+    const currentUser = await this.getCurrentUser(currentUserId, id)
+    const userIndex = currentUser.subscriptions.findIndex(
+      (userInSubscriptions) => userInSubscriptions.id === id,
+    )
+    if (userIndex >= 0) {
+      currentUser.subscriptions.splice(userIndex, 1)
+      await this.userRepository.save(currentUser)
+    }
+
     return id
+  }
+
+  async getCurrentUser(currentUserId: number, id: number): Promise<UserEntity> {
+    if (currentUserId === id) {
+      throw new ImpossibleSubscribeException({ id })
+    }
+
+    const currentUser = await this.userRepository.findOne({
+      where: { id: currentUserId },
+      relations: ['subscriptions'],
+    })
+    if (!currentUser) {
+      throw new ProfileNotFoundException({ id })
+    }
+    return currentUser
   }
 }

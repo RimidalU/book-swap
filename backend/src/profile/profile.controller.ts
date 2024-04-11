@@ -15,6 +15,7 @@ import { ProfileService } from '@src/profile/profile.service'
 import {
   FollowProfileSwaggerDecorator,
   GetProfileSwaggerDecorator,
+  UnfollowProfileSwaggerDecorator,
 } from '@src/profile/decorators'
 
 import {
@@ -56,6 +57,7 @@ export class ProfileController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
+  @UnfollowProfileSwaggerDecorator()
   async unFollowProfile(
     @Param('id', ParseIntPipe) id: number,
     @UserInfo('id') currentUserId: number,
