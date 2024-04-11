@@ -11,6 +11,7 @@ export const userItem: UserType = {
   createdAt: new Date(),
   updatedAt: new Date(),
   books: [],
+  subscriptions: [],
 }
 export const ownerMockId = 123
 
