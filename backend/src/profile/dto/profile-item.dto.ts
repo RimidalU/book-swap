@@ -23,7 +23,7 @@ class ProfileInfo {
     example: false,
     description: 'Is this user in your subscriptions?',
   })
-  readonly following: boolean
+  readonly inSubscriptions: boolean
 }
 
 export class ProfileItemDto {

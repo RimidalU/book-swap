@@ -19,7 +19,7 @@ export function FollowProfileSwaggerDecorator() {
     ApiUnauthorizedResponse({ description: 'Unauthorized' }),
     ApiResponse({
       status: 200,
-      description: 'Profile added to following list',
+      description: 'Profile added to subscriptions list',
       type: ProfileConfirmationResponseDto,
     }),
   )

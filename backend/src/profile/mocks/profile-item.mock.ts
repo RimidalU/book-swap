@@ -11,6 +11,6 @@ export const profileItem: ProfileType = {
   createdAt: new Date(),
   updatedAt: new Date(),
   books: [],
-  following: false,
+  inSubscriptions: false,
   subscriptions: [],
 }

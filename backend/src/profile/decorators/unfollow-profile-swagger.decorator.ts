@@ -14,12 +14,12 @@ export function UnfollowProfileSwaggerDecorator() {
   return applyDecorators(
     ApiBearerAuth(),
 
-    ApiOperation({ summary: 'Remove Profile from following users' }),
+    ApiOperation({ summary: 'Remove Profile from subscriptions users' }),
     ApiNotFoundResponse({ description: 'Not Found' }),
     ApiUnauthorizedResponse({ description: 'Unauthorized' }),
     ApiResponse({
       status: 200,
-      description: 'Profile removed from following list',
+      description: 'Profile removed from subscriptions list',
       type: ProfileConfirmationResponseDto,
     }),
   )
