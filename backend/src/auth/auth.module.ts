@@ -11,6 +11,7 @@ import { ConfigService } from '@nestjs/config'
 
 import { LocalStrategy } from './local.strategy'
 import { JwtStrategy } from '@src/auth/jwt.strategy'
+import { getJwtModuleConfig } from '@src/configs'
 
 @Module({
   imports: [
@@ -19,10 +20,7 @@ import { JwtStrategy } from '@src/auth/jwt.strategy'
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.getOrThrow<string>('JWT_CONSTANTS_SECRET'),
-        signOptions: { expiresIn: '2d' },
-      }),
+      useFactory: getJwtModuleConfig,
     }),
   ],
   controllers: [AuthController],
