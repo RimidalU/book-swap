@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { INestApplication, ValidationPipe } from '@nestjs/common'
+import {HttpStatus, INestApplication, ValidationPipe} from '@nestjs/common'
 import * as request from 'supertest'
 
 import { AppModule } from '@src/app.module'
@@ -22,6 +22,7 @@ import {
   UserResponseDto,
   UsersResponseDto,
 } from '@src/user/dto'
+import {STATUS_CODES} from "http";
 
 describe('AppController (e2e)', () => {
   let app: INestApplication
@@ -105,8 +106,9 @@ describe('AppController (e2e)', () => {
           password: correctUserPassword,
         })
         .expect(201)
-        .then((resp) => {
+        .then((resp: request.Response) => {
           const response = JSON.parse(resp.text)
+          expect(response).toBeDefined()
           token = response.access_token
         })
     })
@@ -118,7 +120,10 @@ describe('AppController (e2e)', () => {
           email: userItem.email,
           password: wrongStringId,
         })
-        .expect(401)
+        .expect(401, {
+          statusCode: HttpStatus.UNAUTHORIZED,
+          message: 'Unauthorized'
+        })
     })
 
     it('POST - 404', () => {
@@ -152,10 +157,10 @@ describe('AppController (e2e)', () => {
           password: correctUserPassword,
         })
         .expect(201)
-        .then((resp) => {
+        .then((resp: request.Response) => {
           const response: UserConfirmationResponseDto = JSON.parse(resp.text)
           userIdForRemove = response.user.itemId
-          expect(response.user.itemId)
+          expect(response.user.itemId).toBeDefined()
         })
     })
 
@@ -177,7 +182,7 @@ describe('AppController (e2e)', () => {
         .get('/user/')
         .set('Authorization', `Bearer ${token}`)
         .expect(200)
-        .then((resp) => {
+        .then((resp: request.Response) => {
           const arr: UsersResponseDto = JSON.parse(resp.text)
           expect(arr.users[0].itemId).toBe(userId)
           expect(arr.users[0].item.name).toBe(userItem.name)
@@ -191,7 +196,7 @@ describe('AppController (e2e)', () => {
         .get(`/user/${userId}`)
         .set('Authorization', `Bearer ${token}`)
         .expect(200)
-        .then((resp) => {
+        .then((resp: request.Response) => {
           const user: UserResponseDto = JSON.parse(resp.text)
           expect(user.user.itemId).toBe(userId)
           expect(user.user.item.name).toBe(userItem.name)
@@ -218,9 +223,10 @@ describe('AppController (e2e)', () => {
         .patch(`/user/${userId}`)
         .set('Authorization', `Bearer ${token}`)
         .expect(200)
-        .then((resp) => {
+        .then((resp: request.Response) => {
           const response: UserConfirmationResponseDto = JSON.parse(resp.text)
-          expect((response.user.itemId = userId))
+          expect(response.user.itemId).toBeDefined()
+          response.user.itemId = userId
         })
     })
 
@@ -263,8 +269,9 @@ describe('AppController (e2e)', () => {
           email: userItem.email + 'new',
           password: correctUserPassword,
         })
-        .then((resp) => {
+        .then((resp: request.Response) => {
           const response = JSON.parse(resp.text)
+          expect(response.access_token).toBeDefined()
           tokenForRemove = response.access_token
         })
     })
@@ -274,7 +281,7 @@ describe('AppController (e2e)', () => {
         .delete(`/user/${userIdForRemove}`)
         .set('Authorization', `Bearer ${tokenForRemove}`)
         .expect(200)
-        .then((resp) => {
+        .then((resp: request.Response) => {
           const response: UserConfirmationResponseDto = JSON.parse(resp.text)
           expect(response.user.itemId).toBe(userIdForRemove)
         })
@@ -294,8 +301,9 @@ describe('AppController (e2e)', () => {
           description: bookItem.description,
         })
         .expect(201)
-        .then((resp) => {
+        .then((resp: request.Response) => {
           const res: BookConfirmationResponseDto = JSON.parse(resp.text)
+          expect(res.book.itemId).toBeDefined()
           bookId = res.book.itemId
         })
     })
@@ -319,7 +327,7 @@ describe('AppController (e2e)', () => {
         .get('/book/')
         .set('Authorization', `Bearer ${token}`)
         .expect(200)
-        .then((resp) => {
+        .then((resp: request.Response) => {
           const response: BooksResponseDto = JSON.parse(resp.text)
           expect(response.books[0].itemId).toBe(bookId)
           expect(response.books[0].item.name).toBe(bookItem.name)
@@ -333,7 +341,7 @@ describe('AppController (e2e)', () => {
         .get(`/book/${bookId}`)
         .set('Authorization', `Bearer ${token}`)
         .expect(200)
-        .then((resp) => {
+        .then((resp: request.Response) => {
           const response: BookResponseDto = JSON.parse(resp.text)
           expect(response.book.itemId).toBe(bookId)
           expect(response.book.item.name).toBe(bookItem.name)
@@ -360,7 +368,7 @@ describe('AppController (e2e)', () => {
         .patch(`/book/${bookId}`)
         .set('Authorization', `Bearer ${token}`)
         .expect(200)
-        .then((resp) => {
+        .then((resp: request.Response) => {
           const response: BookConfirmationResponseDto = JSON.parse(resp.text)
           expect(response.book.itemId).toBe(bookId)
         })
@@ -385,7 +393,7 @@ describe('AppController (e2e)', () => {
         .delete(`/book/${bookId}`)
         .set('Authorization', `Bearer ${token}`)
         .expect(200)
-        .then((resp) => {
+        .then((resp: request.Response) => {
           const response: BookConfirmationResponseDto = JSON.parse(resp.text)
           expect(response.book.itemId).toBe(bookId)
         })
