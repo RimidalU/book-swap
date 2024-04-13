@@ -4,7 +4,10 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 
 import { UserEntity } from '@src/user/entities'
-import { UserNotFoundException } from '@src/user/exceptions'
+import {
+  UserNotCreatedException,
+  UserNotFoundException,
+} from '@src/user/exceptions'
 import { CreateUserDto, UpdateUserDto } from '@src/user/dto'
 
 @Injectable()
@@ -22,8 +25,12 @@ export class UserService {
     const newUser = new UserEntity()
     Object.assign(newUser, payload)
 
-    const user = await this.userRepository.save(newUser)
-    return user.id
+    try {
+      const user = await this.userRepository.save(newUser)
+      return user.id
+    } catch {
+      throw new UserNotCreatedException(payload.email)
+    }
   }
 
   async getById(id: number): Promise<UserEntity> {
