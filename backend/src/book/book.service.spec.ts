@@ -10,6 +10,7 @@ import { UserEntity } from '@src/user/entities'
 import { bookItem, newItemInfo } from './mocks'
 import { BookNotFoundException } from './exceptions'
 import { userItem } from '@src/user/mocks'
+import { ForbiddenException } from '@nestjs/common'
 
 describe('BookService', () => {
   let service: BookService
@@ -166,6 +167,21 @@ describe('BookService', () => {
       await expect(
         service.update(currentUserId, bookItem.id, newBookInfo),
       ).rejects.toThrowError(BookNotFoundException)
+    })
+  })
+
+  describe('check-permission method', () => {
+    it('check-permission with currentUserId equal ownerId should be returned true', async () => {
+      expect(
+        await service.checkPermission(currentUserId, currentUserId),
+      ).toEqual(true)
+    })
+
+    it('check-permission with wrong currentUserId should throw an exception', async () => {
+      const unCurrentUserId = currentUserId + currentUserId
+      await expect(
+        service.checkPermission(currentUserId, unCurrentUserId),
+      ).rejects.toThrowError(ForbiddenException)
     })
   })
 })
