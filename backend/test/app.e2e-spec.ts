@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import {HttpStatus, INestApplication, ValidationPipe} from '@nestjs/common'
+import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common'
 import * as request from 'supertest'
 
 import { AppModule } from '@src/app.module'
@@ -22,7 +22,6 @@ import {
   UserResponseDto,
   UsersResponseDto,
 } from '@src/user/dto'
-import {STATUS_CODES} from "http";
 
 describe('AppController (e2e)', () => {
   let app: INestApplication
@@ -122,7 +121,7 @@ describe('AppController (e2e)', () => {
         })
         .expect(401, {
           statusCode: HttpStatus.UNAUTHORIZED,
-          message: 'Unauthorized'
+          message: 'Unauthorized',
         })
     })
 
