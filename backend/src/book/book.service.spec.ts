@@ -14,7 +14,6 @@ import { ForbiddenException } from '@nestjs/common'
 
 describe('BookService', () => {
   let service: BookService
-
   let bookRepository: Repository<BookEntity>
   const newBookInfo = {
     description: 'New description',
@@ -38,7 +37,6 @@ describe('BookService', () => {
             remove: jest.fn().mockReturnValue(bookItem),
           },
         },
-        // UserService,
         {
           provide: USER_REPOSITORY_TOKEN,
           useValue: {
@@ -46,6 +44,7 @@ describe('BookService', () => {
             findOneBy: jest
               .fn()
               .mockReturnValue({ ...userItem, favorites: [] }),
+            save: jest.fn().mockReturnValue(userItem.id),
           },
         },
         {
@@ -171,17 +170,75 @@ describe('BookService', () => {
   })
 
   describe('check-permission method', () => {
-    it('check-permission with currentUserId equal ownerId should be returned true', async () => {
+    it('check-permission method with currentUserId equal ownerId should be returned true', async () => {
       expect(
         await service.checkPermission(currentUserId, currentUserId),
       ).toEqual(true)
     })
 
-    it('check-permission with wrong currentUserId should throw an exception', async () => {
+    it('check-permission method with wrong currentUserId should throw an exception', async () => {
       const unCurrentUserId = currentUserId + currentUserId
       await expect(
         service.checkPermission(currentUserId, unCurrentUserId),
       ).rejects.toThrowError(ForbiddenException)
+    })
+  })
+
+  describe('ad-to-favorites method', () => {
+    it('addToFavorites method should be returned book id', async () => {
+      const newLikes = bookItem.likes + 1
+      expect(await service.addToFavorites(currentUserId, bookItem.id)).toEqual(
+        bookItem.id,
+      )
+
+      expect(await bookRepository.findOneBy).toHaveBeenCalledWith({
+        id: bookItem.id,
+      })
+
+      expect(bookRepository.save).toHaveBeenCalledWith({
+        ...bookItem,
+        likes: newLikes,
+      })
+    })
+
+    it('addToFavorites with wrong book id should throw an exception', async () => {
+      bookRepository.findOneBy = jest.fn().mockReturnValue(undefined)
+
+      await expect(
+        service.addToFavorites(currentUserId, bookItem.id),
+      ).rejects.toThrowError(BookNotFoundException)
+    })
+  })
+
+  describe('remove-from-favorites method', () => {
+    it('removeFromFavorites method should be returned book id', async () => {
+      const likes = 5
+      const newLikes = likes - 1
+
+      bookRepository.findOneBy = jest
+        .fn()
+        .mockReturnValue({ ...bookItem, likes })
+
+      expect(
+        await service.removeFromFavorites(currentUserId, bookItem.id),
+      ).toEqual(bookItem.id)
+
+      expect(await bookRepository.findOneBy).toHaveBeenCalledWith({
+        id: bookItem.id,
+      })
+
+      expect(bookRepository.save).toHaveBeenCalledWith({
+        ...bookItem,
+        likes: newLikes,
+      })
+    })
+
+    it('removeFromFavorites with wrong book id should throw an exception', async () => {
+      bookRepository.findOneBy = jest.fn().mockReturnValue(undefined)
+
+      await expect(
+        service.removeFromFavorites(currentUserId, bookItem.id),
+      ).rejects.toThrowError(BookNotFoundException)
     })
   })
 })
