@@ -88,18 +88,4 @@ describe('update-user.dto', () => {
     const errors = await validate(ofImportDTO)
     expect(errors.map((err) => err.property).includes('avatar')).toBeFalsy()
   })
-
-  it('token field is not string', async () => {
-    dto.token = numberValue
-    const ofImportDTO = plainToInstance(UpdateUserDto, dto)
-    const errors = await validate(ofImportDTO)
-    expect(errors.map((err) => err.property).includes('token')).toBeTruthy()
-  })
-
-  it('token field is string', async () => {
-    dto.token = stringValue
-    const ofImportDTO = plainToInstance(UpdateUserDto, dto)
-    const errors = await validate(ofImportDTO)
-    expect(errors.map((err) => err.property).includes('token')).toBeFalsy()
-  })
 })

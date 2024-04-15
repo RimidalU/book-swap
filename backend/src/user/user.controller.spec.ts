@@ -7,6 +7,7 @@ import { newItemInfo, userItem } from './mocks'
 describe('UserController', () => {
   let controller: UserController
   let service: UserService
+  const currentUserId = userItem.id
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -39,7 +40,11 @@ describe('UserController', () => {
 
   describe('create book method', () => {
     it('check the book created', async () => {
-      expect(await controller.create(newItemInfo)).toBe(userItem.id)
+      expect(await controller.create(newItemInfo)).toEqual({
+        user: {
+          itemId: userItem.id,
+        },
+      })
 
       expect(service.create).toHaveBeenCalledWith({
         ...newItemInfo,
@@ -49,7 +54,18 @@ describe('UserController', () => {
 
   describe('get all books method', () => {
     it('check returned array of books', async () => {
-      expect(await controller.getAll()).toEqual([userItem])
+      expect(await controller.getAll()).toEqual({
+        users: [
+          {
+            itemId: userItem.id,
+            item: {
+              name: userItem.name,
+              bio: userItem.bio,
+              avatar: userItem.avatar,
+            },
+          },
+        ],
+      })
 
       expect(service.getAll).toHaveBeenCalledWith()
     })
@@ -57,7 +73,16 @@ describe('UserController', () => {
 
   describe('getById book method', () => {
     it('check returned books with current id', async () => {
-      expect(await controller.getById(userItem.id)).toEqual(userItem)
+      expect(await controller.getById(userItem.id)).toEqual({
+        user: {
+          itemId: userItem.id,
+          item: {
+            name: userItem.name,
+            bio: userItem.bio,
+            avatar: userItem.avatar,
+          },
+        },
+      })
 
       expect(service.getById).toHaveBeenCalledWith(userItem.id)
     })
@@ -65,7 +90,11 @@ describe('UserController', () => {
 
   describe('remove book method', () => {
     it('check returned book id', async () => {
-      expect(await controller.remove(userItem.id)).toEqual(userItem.id)
+      expect(await controller.remove(userItem.id, currentUserId)).toEqual({
+        user: {
+          itemId: userItem.id,
+        },
+      })
 
       expect(service.remove).toHaveBeenCalledWith(userItem.id)
     })
@@ -73,9 +102,13 @@ describe('UserController', () => {
 
   describe('update book method', () => {
     it('check returned updated book with current id', async () => {
-      expect(await controller.update(userItem.id, newItemInfo)).toEqual(
-        userItem.id,
-      )
+      expect(
+        await controller.update(userItem.id, newItemInfo, currentUserId),
+      ).toEqual({
+        user: {
+          itemId: userItem.id,
+        },
+      })
 
       expect(service.update).toHaveBeenCalledWith(userItem.id, newItemInfo)
     })

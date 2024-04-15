@@ -4,7 +4,7 @@ import { ConfigModule } from '@nestjs/config'
 import { DatabaseModule } from '@src/database'
 import { BookModule } from '@src/book'
 import { UserModule } from '@src/user'
-import { EnvModule, envSchema } from '@src/env'
+import { EnvModule } from '@src/env'
 
 import { AppController } from '@src/app.controller'
 import { AppService } from '@src/app.service'
@@ -13,13 +13,12 @@ import { JwtModule } from '@nestjs/jwt'
 import { TagModule } from './tag/tag.module'
 import { ProfileModule } from './profile/profile.module'
 
+import { getConfigModuleConfig } from '@src/configs'
+import { FileModule } from './file/file.module'
+
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      validate: (env) => envSchema.parse(env),
-      envFilePath: '../.env',
-    }),
+    ConfigModule.forRoot(getConfigModuleConfig()),
     EnvModule,
     DatabaseModule,
     AuthModule,
@@ -28,6 +27,7 @@ import { ProfileModule } from './profile/profile.module'
     BookModule,
     JwtModule,
     TagModule,
+    FileModule,
   ],
   controllers: [AppController],
   providers: [AppService],
