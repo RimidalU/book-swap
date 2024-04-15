@@ -14,6 +14,7 @@ import { TagModule } from './tag/tag.module'
 import { ProfileModule } from './profile/profile.module'
 
 import { getConfigModuleConfig } from '@src/configs'
+import { FileModule } from './file/file.module'
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { getConfigModuleConfig } from '@src/configs'
     BookModule,
     JwtModule,
     TagModule,
+    FileModule,
   ],
   controllers: [AppController],
   providers: [AppService],
