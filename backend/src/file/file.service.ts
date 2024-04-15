@@ -4,31 +4,30 @@ import { ensureDir, writeFile } from 'fs-extra'
 import * as sharp from 'sharp'
 
 import { UploadFileResponse } from '@src/file/types/upload-file-response'
-import {MulterFileBufferClass} from "@src/file/types";
+import { MulterFileBufferClass } from '@src/file/types'
 
 @Injectable()
 export class FileService {
   async saveFiles(
     currentUserId: number,
-    files: MulterFileBufferClass [],
+    files: MulterFileBufferClass[],
   ): Promise<UploadFileResponse[]> {
     const uploadFolder = `${path}/uploads/img`
     await ensureDir(uploadFolder)
-const response: UploadFileResponse[] =[]
+    const response: UploadFileResponse[] = []
 
-    for(const file of files){
+    for (const file of files) {
       await writeFile(`${uploadFolder}/${file.originalname}`, file.buffer)
+      console.log(`${uploadFolder}/${file.originalname}`)
       response.push({
-        url: `${uploadFolder}/${file.originalname}`,
-        name: file.originalname
+        url: `img/${file.originalname}`,
+        name: file.originalname,
       })
     }
     return response
   }
 
-  async convertToWebP(file: Buffer): Promise<Buffer>{
-return sharp(file)
-  .webp()
-  .toBuffer()
+  async convertToWebP(file: Buffer): Promise<Buffer> {
+    return sharp(file).webp().toBuffer()
   }
 }
