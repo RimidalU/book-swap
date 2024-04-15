@@ -3,17 +3,21 @@ import {
   ArgumentsHost,
   Catch,
   HttpException,
+  HttpStatus,
 } from '@nestjs/common'
 import { Response } from 'express'
 import { ExpressRequestType } from '@src/user/types'
 
-@Catch(HttpException)
+@Catch()
 export class HttpExtendedExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp()
     const response = ctx.getResponse<Response>()
     const request = ctx.getRequest<ExpressRequestType>()
-    const status = exception.getStatus()
+    const status =
+      exception instanceof HttpException
+        ? exception.getStatus()
+        : HttpStatus.NOT_FOUND
 
     response.status(status).json({
       exception: {
