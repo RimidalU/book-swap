@@ -22,7 +22,7 @@ export class HttpExtendedExceptionFilter implements ExceptionFilter {
         timestamp: new Date().toISOString(),
         path: request.url,
         userInfo: {
-          id: request.user.id,
+          id: request.user?.id ?? null,
         },
         payload: request.body,
       },
