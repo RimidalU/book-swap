@@ -18,7 +18,7 @@ export class FileService {
 
     for (const file of files) {
       await writeFile(`${uploadFolder}/${file.originalname}`, file.buffer)
-      console.log(`${uploadFolder}/${file.originalname}`)
+
       response.push({
         url: `img/${file.originalname}`,
         name: file.originalname,
