@@ -3,26 +3,29 @@ import { path } from 'app-root-path'
 import { ensureDir, writeFile } from 'fs-extra'
 import * as sharp from 'sharp'
 
-import { UploadFileResponse } from '@src/file/types/upload-file-response'
-import { MulterFileBufferClass } from '@src/file/types'
+import { UploadFileResponse } from '@src/file/types'
+import { FilesSetInterface } from '@src/file/types'
 
 @Injectable()
 export class FileService {
-  async saveFiles(
+  async saveImg(
     currentUserId: number,
-    files: MulterFileBufferClass[],
-  ): Promise<UploadFileResponse[]> {
+    filesSet: FilesSetInterface,
+  ): Promise<UploadFileResponse> {
     const uploadFolder = `${path}/uploads/img`
     await ensureDir(uploadFolder)
-    const response: UploadFileResponse[] = []
+    const response = {}
 
-    for (const file of files) {
-      await writeFile(`${uploadFolder}/${file.originalname}`, file.buffer)
-
-      response.push({
-        url: `img/${file.originalname}`,
-        name: file.originalname,
-      })
+    for (const file in filesSet) {
+      await writeFile(
+        `${uploadFolder}/${filesSet[file].filename}`,
+        filesSet[file].buffer,
+      )
+      response[file] = {
+        url: `img/${filesSet[file].filename}`,
+        name: filesSet[file].originalname,
+        type: filesSet[file].originalname.split('.').pop(),
+      }
     }
     return response
   }
