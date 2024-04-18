@@ -1,4 +1,7 @@
 export interface UploadFileResponse {
-  url: string
-  name: string
+  [key: string]: {
+    type: string
+    url: string
+    name: string
+  }
 }
