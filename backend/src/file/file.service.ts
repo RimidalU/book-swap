@@ -2,12 +2,24 @@ import { Injectable } from '@nestjs/common'
 import { path } from 'app-root-path'
 import { ensureDir, writeFile } from 'fs-extra'
 import * as sharp from 'sharp'
+import { Repository } from 'typeorm'
+
+import { DatabaseFileEntity } from '@src/file/entities'
 
 import { UploadFileResponse } from '@src/file/types'
 import { FilesSetInterface } from '@src/file/types'
+import { CreateDatabaseFileDto } from '@src/file/dto'
+import {
+  FileNotCreatedException,
+  FileNotFoundException,
+} from '@src/file/exceptions'
 
 @Injectable()
 export class FileService {
+  constructor(
+    private readonly databaseFileRepository: Repository<DatabaseFileEntity>,
+  ) {}
+
   async saveImg(
     currentUserId: number,
     filesSet: FilesSetInterface,
@@ -32,5 +44,25 @@ export class FileService {
 
   async convertToWebP(file: Buffer): Promise<Buffer> {
     return sharp(file).webp().toBuffer()
+  }
+
+  async uploadDatabaseFile(payload: CreateDatabaseFileDto) {
+    const newFile = new DatabaseFileEntity()
+    Object.assign(newFile, payload)
+
+    try {
+      const file = await this.databaseFileRepository.save(newFile)
+      return file
+    } catch {
+      throw new FileNotCreatedException(payload.name)
+    }
+  }
+
+  async getFileById(id: number) {
+    const file = await this.databaseFileRepository.findOneBy({ id })
+    if (!file) {
+      throw new FileNotFoundException({ id })
+    }
+    return file
   }
 }
