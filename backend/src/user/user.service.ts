@@ -9,12 +9,14 @@ import {
   UserNotFoundException,
 } from '@src/user/exceptions'
 import { CreateUserDto, UpdateUserDto } from '@src/user/dto'
+import { FileService } from '@src/file/file.service'
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    private readonly fileService: FileService,
   ) {}
 
   async getAll(): Promise<UserEntity[]> {
@@ -61,5 +63,13 @@ export class UserService {
       throw new UserNotFoundException({ email })
     }
     return user
+  }
+
+  async addAvatar(id: number, data: Buffer, name: string) {
+    const avatar = await this.fileService.uploadDatabaseFile({ data, name })
+    await this.userRepository.update(id, {
+      avatarId: avatar.id,
+    })
+    return id
   }
 }
