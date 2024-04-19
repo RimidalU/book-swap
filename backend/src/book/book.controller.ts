@@ -165,7 +165,7 @@ export class BookController {
         tags: book.tags,
         likes: book.likes,
         ownerId: book.owner.id,
-        ownerAvatar: book.owner.avatar.id,
+        ownerAvatar: book.owner.avatarId,
         inFavorites: book.inFavorites,
       },
     }
