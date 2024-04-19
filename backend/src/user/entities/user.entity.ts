@@ -4,9 +4,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
@@ -15,6 +17,7 @@ import * as bcrypt from 'bcrypt'
 import { IsEmail, IsEmpty } from 'class-validator'
 import { BookEntity } from '@src/book/entities'
 import { ApiProperty } from '@nestjs/swagger'
+import { DatabaseFileEntity } from '@src/file/entities'
 
 const saltOrRounds = 10
 
@@ -38,9 +41,15 @@ export class UserEntity {
   @Column('text', { nullable: true })
   bio?: string
 
+  @JoinColumn({ name: 'avatarId' })
+  @OneToOne(() => DatabaseFileEntity, {
+    nullable: true,
+  })
+  public avatar?: DatabaseFileEntity
+
   @IsEmpty()
-  @Column('text', { nullable: true })
-  avatar?: string
+  @Column({ nullable: true })
+  avatarId?: number
 
   @IsEmail()
   @Column({ unique: true })
