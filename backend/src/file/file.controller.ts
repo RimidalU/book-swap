@@ -1,12 +1,19 @@
 import {
   Controller,
+  Get,
+  Param,
+  ParseIntPipe,
   Post,
+  Res,
+  StreamableFile,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { randomUUID } from 'crypto'
+import { Readable } from 'stream'
+import { Response } from 'express'
 
 import { ApiTags } from '@nestjs/swagger'
 import { JwtAuthGuard } from '@src/auth/jwt-auth.guard'
@@ -21,6 +28,7 @@ import {
 import { UploadFileSwaggerDecorator } from '@src/file/decorators'
 import { FileItemDto } from '@src/file/dto/file-item.dto'
 import { FileResponseDto } from '@src/file/dto'
+import { GetDatabaseFileByIdSwaggerDecorator } from '@src/file/decorators'
 
 @Controller('file')
 @ApiTags('Files routes')
@@ -55,6 +63,26 @@ export class FileController {
     return {
       file: this.buildUploadFileResponse(fileInfo),
     }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('avatar/:id')
+  @GetDatabaseFileByIdSwaggerDecorator()
+  async getDatabaseFileById(
+    @UserInfo('id') currentUserId: number,
+    @Res({ passthrough: true }) response: Response,
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<StreamableFile> {
+    const file = await this.fileService.getFileById(id)
+
+    const stream = Readable.from(file.data)
+
+    response.set({
+      'Content-Disposition': `inline; filename="${file.name}"`,
+      'Content-Type': 'image',
+    })
+
+    return new StreamableFile(stream)
   }
 
   private buildUploadFileResponse(files: UploadFileResponse): FileItemDto {

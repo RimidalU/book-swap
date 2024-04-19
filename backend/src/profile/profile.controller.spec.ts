@@ -47,7 +47,7 @@ describe('ProfileController', () => {
           item: {
             name: profileItem.name,
             bio: profileItem.bio,
-            avatar: profileItem.avatar,
+            avatarId: profileItem.avatarId,
             inSubscriptions: profileItem.inSubscriptions,
           },
         },

@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { FileController } from './file.controller'
 import { FileService } from './file.service'
+import { fileMock } from '@src/file/mocks'
 
 jest.mock('crypto', () => ({
   ...jest.requireActual('crypto'),
@@ -13,18 +14,6 @@ describe('FileController', () => {
   const uuid = '3da01678-1d90-46a6-b072-70a5adc7afd5'
   const currentUserId = 1
 
-  const file = {
-    fieldname: 'file',
-    encoding: '7bit',
-    originalname: 'file.jpeg',
-    mimetype: 'image/jpeg',
-    path: 'something',
-    buffer: Buffer.from('Buffer'),
-    size: 51828,
-    filename: 'file-name',
-    destination: 'destination-path',
-  } as Express.Multer.File
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [FileController],
@@ -32,7 +21,7 @@ describe('FileController', () => {
         {
           provide: FileService,
           useValue: {
-            convertToWebP: jest.fn().mockReturnValue(file),
+            convertToWebP: jest.fn().mockReturnValue(fileMock),
             saveImg: jest.fn().mockReturnValue({
               origin: {
                 name: uuid + '.jpeg',
@@ -64,17 +53,17 @@ describe('FileController', () => {
 
   describe('upload-file method', () => {
     it('check returned files info with current request', async () => {
-      expect(await controller.uploadImg(currentUserId, file)).toEqual({
+      expect(await controller.uploadImg(currentUserId, fileMock)).toEqual({
         file: {
           itemId: null,
           item: {
             origin: {
-              name: file.filename + '.jpeg',
+              name: fileMock.filename + '.jpeg',
               url: 'url1',
               type: 'type1',
             },
             webp: {
-              name: file.filename + '.webp',
+              name: fileMock.filename + '.webp',
               url: 'url2',
               type: 'type2',
             },
@@ -82,16 +71,16 @@ describe('FileController', () => {
         },
       })
 
-      expect(service.convertToWebP).toHaveBeenCalledWith(file.buffer)
+      expect(service.convertToWebP).toHaveBeenCalledWith(fileMock.buffer)
 
       expect(service.saveImg).toHaveBeenCalledWith(currentUserId, {
         origin: {
-          originalname: file.originalname,
-          buffer: file.buffer,
+          originalname: fileMock.originalname,
+          buffer: fileMock.buffer,
           filename: uuid + '.jpeg',
         },
         webp: {
-          buffer: file,
+          buffer: fileMock,
           originalname: 'file.webp',
           filename: uuid + '.webp',
         },

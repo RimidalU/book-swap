@@ -7,7 +7,9 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 
 import { UserService } from '@src/user/user.service'
@@ -22,19 +24,18 @@ import {
   UsersResponseDto,
 } from '@src/user/dto'
 import { JwtAuthGuard } from '@src/auth/jwt-auth.guard'
-import {
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiNotAcceptableResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { NotAcceptableException } from '@nestjs/common/exceptions/not-acceptable.exception'
-import { UserInfo } from '@src/user/decorators/user-info.decorator'
+import {
+  GetAllSwaggerDecorator,
+  RemoveSwaggerDecorator,
+  UserInfo,
+} from '@src/user/decorators'
+import { FileInterceptor } from '@nestjs/platform-express'
+import { UploadFileSwaggerDecorator } from '@src/file/decorators'
+import { CreateSwaggerDecorator } from '@src/user/decorators'
+import { UpdateSwaggerDecorator } from '@src/user/decorators'
+import { GetByIdSwaggerDecorator } from '@src/user/decorators'
 
 @Controller('user')
 @ApiTags('User routes')
@@ -42,13 +43,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create User' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiCreatedResponse({
-    description: 'User created',
-    type: UserConfirmationResponseDto,
-  })
+  @CreateSwaggerDecorator()
   async create(
     @Body() payload: CreateUserDto,
   ): Promise<UserConfirmationResponseDto> {
@@ -57,17 +52,9 @@ export class UserController {
     return this.buildUserConfirmationResponse(userId)
   }
 
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  @ApiOperation({ summary: 'Update User by id' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiNotAcceptableResponse({ description: 'Not Acceptable' })
-  @ApiOkResponse({
-    description: 'User Updated',
-    type: UserConfirmationResponseDto,
-  })
+  @UpdateSwaggerDecorator()
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() payload: UpdateUserDto,
@@ -82,16 +69,9 @@ export class UserController {
     return this.buildUserConfirmationResponse(userId)
   }
 
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get()
-  @ApiOperation({ summary: 'Get All Users' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiResponse({
-    status: 200,
-    description: 'The found records',
-    type: UsersResponseDto,
-  })
+  @GetAllSwaggerDecorator()
   async getAll(): Promise<UsersResponseDto> {
     const users = await this.userService.getAll()
 
@@ -100,17 +80,9 @@ export class UserController {
     }
   }
 
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  @ApiOperation({ summary: 'Get User by id' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiResponse({
-    status: 200,
-    description: 'The found record',
-    type: UserResponseDto,
-  })
+  @GetByIdSwaggerDecorator()
   async getById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<UserResponseDto> {
@@ -121,18 +93,9 @@ export class UserController {
     }
   }
 
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  @ApiOperation({ summary: 'Remove User' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiNotAcceptableResponse({ description: 'Not Acceptable' })
-  @ApiResponse({
-    status: 200,
-    description: 'User removed',
-    type: UserConfirmationResponseDto,
-  })
+  @RemoveSwaggerDecorator()
   async remove(
     @Param('id', ParseIntPipe) id: number,
     @UserInfo('id') currentUserId: number,
@@ -146,13 +109,29 @@ export class UserController {
     return this.buildUserConfirmationResponse(userId)
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Post('avatar')
+  @UploadFileSwaggerDecorator()
+  @UseInterceptors(FileInterceptor('img'))
+  async addAvatar(
+    @UserInfo('id') currentUserId: number,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    await this.userService.addAvatar(
+      currentUserId,
+      file.buffer,
+      file.originalname,
+    )
+    return this.buildUserConfirmationResponse(currentUserId)
+  }
+
   private buildUserResponse(user: UserEntity): UserItemDto {
     return {
       itemId: user.id,
       item: {
         name: user.name,
         bio: user.bio,
-        avatar: user.avatar,
+        avatarId: user.avatarId,
       },
     }
   }

@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing'
 
 import { UserController } from './user.controller'
 import { UserService } from '@src/user/user.service'
-import { newItemInfo, userItem } from './mocks'
+import { fileMock, newItemInfo, userItem } from './mocks'
 
 describe('UserController', () => {
   let controller: UserController
@@ -21,6 +21,7 @@ describe('UserController', () => {
             getById: jest.fn().mockReturnValue(userItem),
             remove: jest.fn().mockReturnValue(userItem.id),
             update: jest.fn().mockReturnValue(userItem.id),
+            addAvatar: jest.fn().mockReturnValue(userItem.id),
           },
         },
       ],
@@ -30,7 +31,7 @@ describe('UserController', () => {
     service = module.get(UserService)
   })
 
-  it('should be defined', () => {
+  it('controller should be defined', () => {
     expect(controller).toBeDefined()
   })
 
@@ -38,8 +39,8 @@ describe('UserController', () => {
     expect(service).toBeDefined()
   })
 
-  describe('create book method', () => {
-    it('check the book created', async () => {
+  describe('create user method', () => {
+    it('check the user created', async () => {
       expect(await controller.create(newItemInfo)).toEqual({
         user: {
           itemId: userItem.id,
@@ -52,8 +53,8 @@ describe('UserController', () => {
     })
   })
 
-  describe('get all books method', () => {
-    it('check returned array of books', async () => {
+  describe('get all users method', () => {
+    it('check returned array of user', async () => {
       expect(await controller.getAll()).toEqual({
         users: [
           {
@@ -71,8 +72,8 @@ describe('UserController', () => {
     })
   })
 
-  describe('getById book method', () => {
-    it('check returned books with current id', async () => {
+  describe('getById user method', () => {
+    it('check returned user with current id', async () => {
       expect(await controller.getById(userItem.id)).toEqual({
         user: {
           itemId: userItem.id,
@@ -88,8 +89,8 @@ describe('UserController', () => {
     })
   })
 
-  describe('remove book method', () => {
-    it('check returned book id', async () => {
+  describe('remove user method', () => {
+    it('check returned user id', async () => {
       expect(await controller.remove(userItem.id, currentUserId)).toEqual({
         user: {
           itemId: userItem.id,
@@ -100,8 +101,8 @@ describe('UserController', () => {
     })
   })
 
-  describe('update book method', () => {
-    it('check returned updated book with current id', async () => {
+  describe('update user method', () => {
+    it('check returned updated user with current id', async () => {
       expect(
         await controller.update(userItem.id, newItemInfo, currentUserId),
       ).toEqual({
@@ -111,6 +112,22 @@ describe('UserController', () => {
       })
 
       expect(service.update).toHaveBeenCalledWith(userItem.id, newItemInfo)
+    })
+  })
+
+  describe('change user avatar method', () => {
+    it('check returned updated user with new avatar id', async () => {
+      expect(await controller.addAvatar(userItem.id, fileMock)).toEqual({
+        user: {
+          itemId: userItem.id,
+        },
+      })
+
+      expect(service.addAvatar).toHaveBeenCalledWith(
+        userItem.id,
+        fileMock.buffer,
+        fileMock.originalname,
+      )
     })
   })
 })

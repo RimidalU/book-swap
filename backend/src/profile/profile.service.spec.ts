@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { DataSource, Repository } from 'typeorm'
 
 import { ProfileService } from './profile.service'
 import {
@@ -11,13 +11,18 @@ import { UserEntity } from '../user/entities'
 
 import { UserService } from '../user'
 import { profileItem } from './mocks'
+import { FileService } from '@src/file/file.service'
+import { DatabaseFileEntity } from '@src/file/entities'
 
 describe('ProfileService', () => {
   let service: ProfileService
   let userRepository: Repository<UserEntity>
+  let fileService: FileService
+  let databaseFileEntityRepository: Repository<DatabaseFileEntity>
   const currentUserId = 1
 
   const USER_REPOSITORY_TOKEN = getRepositoryToken(UserEntity)
+  const DATABASE_FILE_REPOSITORY_TOKEN = getRepositoryToken(DatabaseFileEntity)
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -35,11 +40,22 @@ describe('ProfileService', () => {
             }),
           },
         },
+        FileService,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
+        {
+          provide: DATABASE_FILE_REPOSITORY_TOKEN,
+          useValue: {},
+        },
       ],
     }).compile()
 
     service = module.get(ProfileService)
     userRepository = module.get(USER_REPOSITORY_TOKEN)
+    fileService = module.get(FileService)
+    databaseFileEntityRepository = module.get(FileService)
   })
 
   it('service should be defined', () => {
@@ -48,6 +64,14 @@ describe('ProfileService', () => {
 
   it('user-repository should be defined', () => {
     expect(userRepository).toBeDefined()
+  })
+
+  it('file-service should be defined', () => {
+    expect(fileService).toBeDefined()
+  })
+
+  it('database-file-entity-repository should be defined', () => {
+    expect(databaseFileEntityRepository).toBeDefined()
   })
 
   describe('get-profile method', () => {
