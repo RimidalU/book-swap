@@ -89,7 +89,6 @@ export class FileService {
       DatabaseFileEntity,
       { id },
     )
-    console.log(deleteResponse)
     if (!deleteResponse.affected) {
       throw new FileNotFoundException({ id: id })
     }
