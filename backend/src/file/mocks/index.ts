@@ -1,1 +1,1 @@
-export * from './file.mack'
+export * from './file.mock'
