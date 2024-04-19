@@ -1,13 +1,10 @@
 import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common'
+import { ApiTags } from '@nestjs/swagger'
+
 import { AuthService } from '@src/auth/auth.service'
 import { LocalAuthGuard } from '@src/auth/local-auth.guard'
-import {
-  ApiCreatedResponse,
-  ApiNotFoundResponse,
-  ApiOperation,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger'
+import { LoginSwaggerDecorator } from '@src/auth/decorators'
+
 import { ValidateUserDto } from '@src/auth/dto'
 import { LoginResponseDto } from '@src/auth/dto/login-response.dto'
 
@@ -18,13 +15,7 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')
-  @ApiOperation({ summary: 'Get Access Token by Email and Password' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiCreatedResponse({
-    description: 'Correct User Data',
-    type: LoginResponseDto,
-  })
+  @LoginSwaggerDecorator()
   async login(
     @Body() createUserDto: ValidateUserDto,
     @Request() req,
