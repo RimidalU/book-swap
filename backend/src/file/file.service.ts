@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { path } from 'app-root-path'
 import { ensureDir, writeFile } from 'fs-extra'
 import * as sharp from 'sharp'
-import { Repository } from 'typeorm'
+import { QueryRunner, Repository } from 'typeorm'
 
 import { DatabaseFileEntity } from '@src/file/entities'
 
@@ -66,5 +66,32 @@ export class FileService {
       throw new FileNotFoundException({ id })
     }
     return file
+  }
+
+  async uploadDatabaseFileWithQueryRunner(
+    payload: CreateDatabaseFileDto,
+    queryRunner: QueryRunner,
+  ) {
+    const initFile = new DatabaseFileEntity()
+    Object.assign(initFile, payload)
+
+    const newFile = await queryRunner.manager.create(
+      DatabaseFileEntity,
+      initFile,
+    )
+
+    await queryRunner.manager.save(DatabaseFileEntity, newFile)
+    return newFile
+  }
+
+  async deleteFileWithQueryRunner(id: number, queryRunner: QueryRunner) {
+    const deleteResponse = await queryRunner.manager.delete(
+      DatabaseFileEntity,
+      { id },
+    )
+    console.log(deleteResponse)
+    if (!deleteResponse.affected) {
+      throw new FileNotFoundException({ id: id })
+    }
   }
 }
