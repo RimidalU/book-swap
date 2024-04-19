@@ -76,7 +76,7 @@ export class ProfileController {
       item: {
         name: profile.name,
         bio: profile.bio,
-        avatar: profile.avatar,
+        avatarId: profile.avatarId,
         inSubscriptions: profile.inSubscriptions,
       },
     }

@@ -54,7 +54,7 @@ export class BookItemInfoDto {
     example: 'jack.png',
     description: 'Book owner avatar',
   })
-  readonly ownerAvatar: string
+  readonly ownerAvatar: number
 
   @ApiProperty({
     example: true,

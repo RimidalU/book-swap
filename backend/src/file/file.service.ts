@@ -13,10 +13,12 @@ import {
   FileNotCreatedException,
   FileNotFoundException,
 } from '@src/file/exceptions'
+import { InjectRepository } from '@nestjs/typeorm'
 
 @Injectable()
 export class FileService {
   constructor(
+    @InjectRepository(DatabaseFileEntity)
     private readonly databaseFileRepository: Repository<DatabaseFileEntity>,
   ) {}
 

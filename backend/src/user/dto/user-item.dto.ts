@@ -14,10 +14,10 @@ class UserInfo {
   readonly bio?: string
 
   @ApiProperty({
-    example: 'don-dou.png',
-    description: 'User Avatar',
+    example: 333,
+    description: 'User Avatar id',
   })
-  readonly avatar?: string
+  readonly avatarId?: number
 }
 
 export class UserItemDto {

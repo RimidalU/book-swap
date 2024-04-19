@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { FileService } from './file.service'
 
-import {fileMock} from "@src/file/mocks";
+import { fileMock } from '@src/file/mocks'
 
 describe('FileService', () => {
   let service: FileService

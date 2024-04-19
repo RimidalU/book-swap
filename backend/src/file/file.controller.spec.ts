@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { FileController } from './file.controller'
 import { FileService } from './file.service'
-import {fileMock} from "@src/file/mocks";
+import { fileMock } from '@src/file/mocks'
 
 jest.mock('crypto', () => ({
   ...jest.requireActual('crypto'),

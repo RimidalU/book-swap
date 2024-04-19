@@ -70,6 +70,6 @@ export class UserService {
     await this.userRepository.update(id, {
       avatarId: avatar.id,
     })
-    return id
+    return avatar.id
   }
 }
