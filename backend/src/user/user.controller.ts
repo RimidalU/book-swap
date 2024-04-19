@@ -7,7 +7,9 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 
 import { UserService } from '@src/user/user.service'
@@ -35,6 +37,8 @@ import {
 } from '@nestjs/swagger'
 import { NotAcceptableException } from '@nestjs/common/exceptions/not-acceptable.exception'
 import { UserInfo } from '@src/user/decorators/user-info.decorator'
+import { FileInterceptor } from '@nestjs/platform-express'
+import {UploadFileSwaggerDecorator} from "@src/file/decorators";
 
 @Controller('user')
 @ApiTags('User routes')
@@ -146,13 +150,28 @@ export class UserController {
     return this.buildUserConfirmationResponse(userId)
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Post('avatar')
+  @UploadFileSwaggerDecorator()
+  @UseInterceptors(FileInterceptor('img'))
+  async addAvatar(
+    @UserInfo('id') currentUserId: number,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.userService.addAvatar(
+      currentUserId,
+      file.buffer,
+      file.originalname,
+    )
+  }
+
   private buildUserResponse(user: UserEntity): UserItemDto {
     return {
       itemId: user.id,
       item: {
         name: user.name,
         bio: user.bio,
-        avatar: user.avatar,
+        avatarId: user.avatarId,
       },
     }
   }
