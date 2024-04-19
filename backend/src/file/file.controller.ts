@@ -15,14 +15,7 @@ import { randomUUID } from 'crypto'
 import { Readable } from 'stream'
 import { Response } from 'express'
 
-import {
-  ApiBearerAuth,
-  ApiNotFoundResponse,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { JwtAuthGuard } from '@src/auth/jwt-auth.guard'
 import { FileService } from '@src/file/file.service'
 
@@ -35,7 +28,7 @@ import {
 import { UploadFileSwaggerDecorator } from '@src/file/decorators'
 import { FileItemDto } from '@src/file/dto/file-item.dto'
 import { FileResponseDto } from '@src/file/dto'
-import { UserResponseDto } from '@src/user/dto'
+import { GetDatabaseFileByIdSwaggerDecorator } from '@src/file/decorators'
 
 @Controller('file')
 @ApiTags('Files routes')
@@ -72,17 +65,9 @@ export class FileController {
     }
   }
 
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get('avatar/:id')
-  @ApiOperation({ summary: 'Get User`s Avatar by id' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiResponse({
-    status: 200,
-    description: 'Return User`s Avatar image',
-    type: UserResponseDto,
-  })
+  @GetDatabaseFileByIdSwaggerDecorator()
   async getDatabaseFileById(
     @UserInfo('id') currentUserId: number,
     @Res({ passthrough: true }) response: Response,
