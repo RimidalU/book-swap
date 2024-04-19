@@ -158,11 +158,12 @@ export class UserController {
     @UserInfo('id') currentUserId: number,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.userService.addAvatar(
+    await this.userService.addAvatar(
       currentUserId,
       file.buffer,
       file.originalname,
     )
+    return this.buildUserConfirmationResponse(currentUserId)
   }
 
   private buildUserResponse(user: UserEntity): UserItemDto {
