@@ -38,7 +38,7 @@ import {
 import { NotAcceptableException } from '@nestjs/common/exceptions/not-acceptable.exception'
 import { UserInfo } from '@src/user/decorators/user-info.decorator'
 import { FileInterceptor } from '@nestjs/platform-express'
-import {UploadFileSwaggerDecorator} from "@src/file/decorators";
+import { UploadFileSwaggerDecorator } from '@src/file/decorators'
 
 @Controller('user')
 @ApiTags('User routes')

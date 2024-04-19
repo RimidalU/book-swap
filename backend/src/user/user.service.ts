@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 
-import { Repository } from 'typeorm'
+import { DataSource, Repository } from 'typeorm'
 
 import { UserEntity } from '@src/user/entities'
 import {
@@ -17,6 +17,7 @@ export class UserService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly fileService: FileService,
+    private dataSource: DataSource,
   ) {}
 
   async getAll(): Promise<UserEntity[]> {
@@ -66,10 +67,41 @@ export class UserService {
   }
 
   async addAvatar(id: number, data: Buffer, name: string) {
-    const avatar = await this.fileService.uploadDatabaseFile({ data, name })
-    await this.userRepository.update(id, {
-      avatarId: avatar.id,
-    })
-    return avatar.id
+    const queryRunner = this.dataSource.createQueryRunner()
+
+    await queryRunner.connect()
+    await queryRunner.startTransaction()
+
+    try {
+      const currentUser = await queryRunner.manager.findOne(UserEntity, {
+        where: { id },
+      })
+      const currentAvatarId = currentUser.avatarId
+
+      const avatar = await this.fileService.uploadDatabaseFileWithQueryRunner(
+        { data, name },
+        queryRunner,
+      )
+
+      await queryRunner.manager.update(UserEntity, id, {
+        avatarId: avatar.id,
+      })
+
+      if (currentAvatarId) {
+        await this.fileService.deleteFileWithQueryRunner(
+          currentAvatarId,
+          queryRunner,
+        )
+      }
+
+      await queryRunner.commitTransaction()
+
+      return avatar.id
+    } catch (e) {
+      await queryRunner.rollbackTransaction()
+      throw new InternalServerErrorException(e)
+    } finally {
+      await queryRunner.release()
+    }
   }
 }
