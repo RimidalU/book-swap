@@ -169,6 +169,7 @@ export class BookController {
       bookId,
       data: file.buffer,
       originalname: file.originalname,
+      mimetype: file.mimetype,
     })
 
     return this.buildBookConfirmationResponse(bookId)

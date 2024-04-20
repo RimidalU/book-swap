@@ -49,7 +49,7 @@ export class FileService {
     return sharp(file).webp().toBuffer()
   }
 
-  async uploadFile(payload: { data: Buffer; name: string }) {
+  async uploadFile(payload: { data: Buffer; name: string; mimetype: string }) {
     const uploadFolder = `${path}/uploads/ebook`
     await ensureDir(uploadFolder)
     const newFileName = randomUUID()
@@ -62,7 +62,8 @@ export class FileService {
     const newFile = new DatabaseFileEntity()
     Object.assign(newFile, {
       name: payload.name,
-      url: `ebook/${newFullFileName}`,
+      url: `uploads/ebook/${newFullFileName}`,
+      mimetype: payload.mimetype,
     })
 
     try {
@@ -76,7 +77,7 @@ export class FileService {
   async getFileById(id: number) {
     const file = await this.databaseFileRepository.findOneBy({ id })
     if (!file) {
-      throw new FileNotFoundException( id)
+      throw new FileNotFoundException(id)
     }
     return file
   }

@@ -296,6 +296,7 @@ export class BookService {
     bookId: number
     data: Buffer
     originalname: string
+    mimetype: string
   }): Promise<number> {
     const book = await this.getOne(payload.bookId)
 
@@ -305,6 +306,7 @@ export class BookService {
     const ebook = await this.fileService.uploadFile({
       data: payload.data,
       name: payload.originalname,
+      mimetype: payload.mimetype,
     })
 
     book.ebookId = ebook.id
