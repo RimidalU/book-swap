@@ -14,6 +14,10 @@ export class DatabaseFileEntity {
   url?: string
 
   @IsEmpty()
+  @Column({ nullable: true })
+  mimetype?: string
+
+  @IsEmpty()
   @Column({
     type: 'bytea',
     nullable: true,
