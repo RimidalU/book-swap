@@ -190,6 +190,7 @@ export class BookController {
         ownerId: book.owner.id,
         ownerAvatar: book.owner.avatarId,
         inFavorites: book.inFavorites,
+        ebookId: book.ebookId,
       },
     }
   }

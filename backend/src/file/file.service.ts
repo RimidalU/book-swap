@@ -14,6 +14,7 @@ import {
   FileNotFoundException,
 } from '@src/file/exceptions'
 import { InjectRepository } from '@nestjs/typeorm'
+import { randomUUID } from 'crypto'
 
 @Injectable()
 export class FileService {
@@ -48,9 +49,21 @@ export class FileService {
     return sharp(file).webp().toBuffer()
   }
 
-  async uploadDatabaseFile(payload: CreateDatabaseFileDto) {
+  async uploadFile(payload: { data: Buffer; name: string }) {
+    const uploadFolder = `${path}/uploads/ebook`
+    await ensureDir(uploadFolder)
+    const newFileName = randomUUID()
+
+    const newFullFileName = `${newFileName}.${payload.name.split('.').pop()}`
+    const pathToFile = `${uploadFolder}/${newFullFileName}`
+
+    await writeFile(pathToFile, payload.data)
+
     const newFile = new DatabaseFileEntity()
-    Object.assign(newFile, payload)
+    Object.assign(newFile, {
+      name: payload.name,
+      url: `ebook/${newFullFileName}`,
+    })
 
     try {
       const file = await this.databaseFileRepository.save(newFile)
