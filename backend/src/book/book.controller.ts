@@ -8,7 +8,9 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 
 import { BookService } from '@src/book/book.service'
@@ -25,6 +27,7 @@ import {
   RemoveSwaggerDecorator,
   RemoveFromFavoritesSwaggerDecorator,
   MyFeedSwaggerDecorator,
+  AddEbookSwaggerDecorator,
 } from '@src/book/decorators'
 
 import { ShortBookItemDto } from '@src/book/dto'
@@ -40,6 +43,7 @@ import {
   CreateBookDto,
   UpdateBookDto,
 } from '@src/book/dto'
+import { FileInterceptor } from '@nestjs/platform-express'
 
 @ApiTags('Book routes')
 @Controller('book')
@@ -149,6 +153,25 @@ export class BookController {
     const id = await this.bookService.removeFromFavorites(currentUserId, bookId)
 
     return this.buildBookConfirmationResponse(id)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('ebook/:id')
+  @AddEbookSwaggerDecorator()
+  @UseInterceptors(FileInterceptor('ebook'))
+  async addEBook(
+    @UserInfo('id') currentUserId: number,
+    @Param('id', ParseIntPipe) bookId: number,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<BookConfirmationResponseDto> {
+    await this.bookService.addEBook({
+      currentUserId,
+      bookId,
+      data: file.buffer,
+      originalname: file.originalname,
+    })
+
+    return this.buildBookConfirmationResponse(bookId)
   }
 
   private buildShortBookResponse(
