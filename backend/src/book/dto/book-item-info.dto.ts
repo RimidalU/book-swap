@@ -51,7 +51,7 @@ export class BookItemInfoDto {
   readonly ownerId: number
 
   @ApiProperty({
-    example: 'jack.png',
+    example: 12,
     description: 'Book owner avatar',
   })
   readonly ownerAvatar: number
@@ -61,4 +61,10 @@ export class BookItemInfoDto {
     description: "The book is in this user's favorites",
   })
   readonly inFavorites: boolean
+
+  @ApiProperty({
+    example: 42,
+    description: 'E-version of the book',
+  })
+  readonly ebookId: number
 }

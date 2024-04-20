@@ -116,7 +116,7 @@ export class UserController {
   async addAvatar(
     @UserInfo('id') currentUserId: number,
     @UploadedFile() file: Express.Multer.File,
-  ) {
+  ): Promise<UserConfirmationResponseDto> {
     await this.userService.addAvatar(
       currentUserId,
       file.buffer,

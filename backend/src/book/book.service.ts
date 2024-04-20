@@ -6,7 +6,10 @@ import { DataSource, Repository } from 'typeorm'
 import { BookEntity } from '@src/book/entities'
 import { CreateBookDto, UpdateBookDto } from '@src/book/dto'
 
-import { BookNotFoundException } from '@src/book/exceptions'
+import {
+  BookNotFoundException,
+  BookNotUpdatedException,
+} from '@src/book/exceptions'
 import {
   BookEntityWithInFavoritesInterface,
   QueryInterface,
@@ -14,6 +17,7 @@ import {
 import { BooksResponseInterface } from '@src/book/types/books-response.interface'
 import { UserEntity } from '@src/user/entities'
 import { UserNotFoundException } from '@src/user/exceptions'
+import { FileService } from '@src/file/file.service'
 
 @Injectable()
 export class BookService {
@@ -22,6 +26,7 @@ export class BookService {
     private readonly bookRepository: Repository<BookEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    private readonly fileService: FileService,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -284,5 +289,30 @@ export class BookService {
     })
 
     return { books: favoritesBook, count }
+  }
+
+  async addEBook(payload: {
+    currentUserId: number
+    bookId: number
+    data: Buffer
+    originalname: string
+    mimetype: string
+  }): Promise<number> {
+    const book = await this.getOne(payload.bookId)
+
+    if (book.owner.id !== payload.currentUserId) {
+      throw new BookNotUpdatedException(payload.bookId)
+    }
+    const ebook = await this.fileService.uploadFile({
+      data: payload.data,
+      name: payload.originalname,
+      mimetype: payload.mimetype,
+    })
+
+    book.ebookId = ebook.id
+
+    const newBook = await this.bookRepository.save(book)
+
+    return newBook.id
   }
 }

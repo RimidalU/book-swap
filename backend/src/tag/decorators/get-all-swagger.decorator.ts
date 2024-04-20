@@ -10,7 +10,7 @@ import {
 
 import { TagsResponseDto } from '@src/tag/dto'
 
-export function CreateSwaggerDecorator() {
+export function GetAllSwaggerDecorator() {
   return applyDecorators(
     ApiBearerAuth(),
 
