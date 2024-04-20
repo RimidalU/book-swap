@@ -23,6 +23,7 @@ import { TagsQueryInterface } from '@src/tag/types'
 import { TagEntity } from './entities'
 import {
   CreateSwaggerDecorator,
+  GetAllSwaggerDecorator,
   GetByIdSwaggerDecorator,
   RemoveSwaggerDecorator,
 } from '@src/tag/decorators'
@@ -45,7 +46,7 @@ export class TagController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  @CreateSwaggerDecorator()
+  @GetAllSwaggerDecorator()
   async getAll(@Query() query: TagsQueryInterface): Promise<TagsResponseDto> {
     const tags = await this.tagService.findAll(query)
 
