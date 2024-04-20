@@ -7,8 +7,6 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
 
-import { UserResponseDto } from '@src/user/dto'
-
 export function GetDatabaseFileByIdSwaggerDecorator() {
   return applyDecorators(
     ApiBearerAuth(),
@@ -19,7 +17,6 @@ export function GetDatabaseFileByIdSwaggerDecorator() {
     ApiResponse({
       status: 200,
       description: 'Return User`s Avatar image',
-      type: UserResponseDto,
     }),
   )
 }
