@@ -14,8 +14,17 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { randomUUID } from 'crypto'
 import { Readable } from 'stream'
 import { Response } from 'express'
+import { createReadStream } from 'fs'
+import { join } from 'path'
 
-import { ApiTags } from '@nestjs/swagger'
+import {
+  ApiBearerAuth,
+  ApiNotFoundResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger'
 import { JwtAuthGuard } from '@src/auth/jwt-auth.guard'
 import { FileService } from '@src/file/file.service'
 
@@ -82,6 +91,29 @@ export class FileController {
       'Content-Type': 'image',
     })
 
+    return new StreamableFile(stream)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get EBook by id' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiResponse({
+    status: 200,
+    description: 'Return EBook',
+  })
+  async getFileById(
+    @Res({ passthrough: true }) response: Response,
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<StreamableFile> {
+    const file = await this.fileService.getFileById(id)
+    const stream = createReadStream(join(process.cwd(), file.url))
+    response.set({
+      'Content-Disposition': `inline; filename="${file.url}"`,
+      'Content-Type': file.mimetype,
+    })
     return new StreamableFile(stream)
   }
 
