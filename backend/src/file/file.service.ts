@@ -76,7 +76,7 @@ export class FileService {
   async getFileById(id: number) {
     const file = await this.databaseFileRepository.findOneBy({ id })
     if (!file) {
-      throw new FileNotFoundException({ id })
+      throw new FileNotFoundException( id)
     }
     return file
   }
@@ -103,7 +103,7 @@ export class FileService {
       { id },
     )
     if (!deleteResponse.affected) {
-      throw new FileNotFoundException({ id: id })
+      throw new FileNotFoundException(id)
     }
   }
 }
