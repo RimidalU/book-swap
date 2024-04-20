@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { IsEmpty } from 'class-validator'
 
 @Entity('databaseFile')
 export class DatabaseFileEntity {
@@ -8,8 +9,14 @@ export class DatabaseFileEntity {
   @Column()
   name: string
 
+  @IsEmpty()
+  @Column({ nullable: true })
+  url?: string
+
+  @IsEmpty()
   @Column({
     type: 'bytea',
+    nullable: true,
   })
-  data: Uint8Array
+  data?: Uint8Array
 }

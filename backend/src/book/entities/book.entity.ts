@@ -3,12 +3,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
 import { IsEmpty } from 'class-validator'
 import { UserEntity } from '@src/user/entities'
+import { DatabaseFileEntity } from '@src/file/entities'
 
 @Entity('book')
 export class BookEntity {
@@ -53,6 +56,16 @@ export class BookEntity {
   @IsEmpty()
   @Column('simple-array', { default: [] })
   tags?: string[]
+
+  @JoinColumn({ name: 'ebookId' })
+  @OneToOne(() => DatabaseFileEntity, {
+    nullable: true,
+  })
+  public ebook?: DatabaseFileEntity
+
+  @IsEmpty()
+  @Column({ nullable: true })
+  ebookId?: number
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
   createdAt: Date
