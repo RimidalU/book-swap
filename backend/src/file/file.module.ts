@@ -15,7 +15,7 @@ import { DatabaseFileEntity } from '@src/file/entities'
     ServeStaticModule.forRoot({
       serveStaticOptions: { index: false },
       serveRoot: '/static',
-      rootPath: `${path}/uploads`,
+      rootPath: `${path}/uploads/img`,
       exclude: ['/api/(.*)'],
     }),
   ],
