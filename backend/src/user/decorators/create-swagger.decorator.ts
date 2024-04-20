@@ -8,18 +8,18 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
 
-import { TagConfirmationResponseDto } from '@src/tag/dto'
+import { UserConfirmationResponseDto } from '@src/user/dto'
 
 export function CreateSwaggerDecorator() {
   return applyDecorators(
     ApiBearerAuth(),
 
-    ApiOperation({ summary: 'Create Tag' }),
+    ApiOperation({ summary: 'Create User' }),
     ApiNotFoundResponse({ description: 'Not Found' }),
     ApiUnauthorizedResponse({ description: 'Unauthorized' }),
     ApiCreatedResponse({
-      description: 'Tag created',
-      type: TagConfirmationResponseDto,
+      description: 'User created',
+      type: UserConfirmationResponseDto,
     }),
   )
 }
