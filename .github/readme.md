@@ -1,8 +1,8 @@
-[//]: # (<img src="../src/app/icon.png" id="start" align="right" alt="Project logo" width="50" >)
+<img src="./assets/book-swap.png" id="start" align="right" alt="Project logo" width="50" >
 
 # Book Swap.
 
-> Book Swap...
+> `Book Swap` service server on Nest framework. 
 
 ![GitHub last commit](https://img.shields.io/github/last-commit/RimidalU/book-swap)
 ![license](https://img.shields.io/github/license/RimidalU/book-swap)
@@ -42,17 +42,31 @@
 
 ## Description
 
-...
+Is a platform for exchanging books. 
+
+App provides registered users with the opportunity to share books, add favorites to both books and users, and has a feed informing about new events from users from favorites.
+The functionality also includes registration, authorization of users, assignment tags and search by tags, downloading and storing avatars of user in the database, downloading and converting photos to webp with the inclusion of static distribution, the ability to add an electronic version of the book.
+
+And many, many other features...
 
 ## Project setup
 
 - Clone this repo to your desktop and run `yarn` or `npm install` to install all the dependencies.
 - Once the dependencies are installed, you can run `yarn dev` or `npm dev` to start the application.
+- Swagger project: http://localhost:3001/docs#/
 - Enjoy.
 
 ## Features
 
-- TODO: add Features.
+- Registration, authorization of users.
+- Tag system for describing books, and searching for them.
+- Ability to add books to favorites.
+- Search for books by multiple parameters.
+- The ability to subscribe to users and receive messages about their new books.
+- Uploading and storing avatars of user in the database.
+- Uploading and converting books images to webp.
+- Serve static distribution images.
+- Ability to add an electronic version of the book.
 
 ## How To Use
 
@@ -70,9 +84,8 @@ Project is: _in progress_
 
 To do:
 
-- [ ] Add documentation.
-- [ ] Create logo.
-- [ ] Create backend.
+- [ ] Implement logic of borrowers and borrowers queue.
+- [ ] Create frontend.
 - [ ] ...
 
 Improvement:
