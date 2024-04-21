@@ -3,7 +3,9 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
+  ParseFilePipeBuilder,
   ParseIntPipe,
   Patch,
   Post,
@@ -162,7 +164,19 @@ export class BookController {
   async addEBook(
     @UserInfo('id') currentUserId: number,
     @Param('id', ParseIntPipe) bookId: number,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType: /.(pdf|epub|doc|doxs|djvu)$/,
+        })
+        .addMaxSizeValidator({
+          maxSize: 50 * 1024 * 1024,
+        })
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        }),
+    )
+    file: Express.Multer.File,
   ): Promise<BookConfirmationResponseDto> {
     await this.bookService.addEBook({
       currentUserId,
