@@ -12,7 +12,7 @@ export const bookItem: BookType = {
   owner: new UserEntity(),
   isBorrowed: false,
   borrower: null,
-  borrowersQueue: [],
+  borrowersIdsQueue: [],
   likes: 0,
   createdAt: new Date(),
   updatedAt: new Date(),

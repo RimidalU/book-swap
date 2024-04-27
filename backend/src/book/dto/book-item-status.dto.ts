@@ -1,23 +1,29 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-class BorrowerInfo {
+export class BorrowerInfo {
   @ApiProperty({
     example: 12,
     description: 'Borrower id',
   })
-  readonly borrowerId: number
+  readonly id: number
 
   @ApiProperty({
     example: 'Don Dou',
     description: 'Borrower Name',
   })
-  readonly borrowerName: string
+  readonly name: string
+
+  @ApiProperty({
+    example: 12,
+    description: 'Borrower avatar id',
+  })
+  avatarId?: number
 }
 
 export class BookItemStatusDto {
   @ApiProperty({
     example: true,
-    description: 'User id',
+    description: 'Book is borrowed',
   })
   readonly isBorrowed: boolean
 
@@ -25,5 +31,5 @@ export class BookItemStatusDto {
   readonly borrower: BorrowerInfo
 
   @ApiProperty({ description: 'Borrowers Queue' })
-  readonly borrowersQueue: BorrowerInfo[]
+  readonly borrowersIdsQueue: number[]
 }
