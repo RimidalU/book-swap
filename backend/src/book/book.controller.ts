@@ -18,7 +18,7 @@ import {
 import { BookService } from '@src/book/book.service'
 
 import { JwtAuthGuard } from '@src/auth/jwt-auth.guard'
-import { UserInfo } from '@src/user/decorators/user-info.decorator'
+import { UserInfo } from '@src/user/decorators'
 import { ApiTags } from '@nestjs/swagger'
 import {
   GetAllSwaggerDecorator,
@@ -34,6 +34,7 @@ import {
 
 import { ShortBookItemDto } from '@src/book/dto'
 import {
+  BookEntityWithBorrowerInterface,
   BookEntityWithInFavoritesInterface,
   QueryInterface,
 } from '@src/book/types'
@@ -46,6 +47,7 @@ import {
   UpdateBookDto,
 } from '@src/book/dto'
 import { FileInterceptor } from '@nestjs/platform-express'
+import { AddToBorrowersQueueSwaggerDecorator } from '@src/book/decorators'
 
 @ApiTags('Book routes')
 @Controller('book')
@@ -189,6 +191,21 @@ export class BookController {
     return this.buildBookConfirmationResponse(bookId)
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Post('borrowersQueue/:id')
+  @AddToBorrowersQueueSwaggerDecorator()
+  async addToBorrowersQueue(
+    @UserInfo('id') currentUserId: number,
+    @Param('id', ParseIntPipe) bookId: number,
+  ): Promise<BookConfirmationResponseDto> {
+    const responseBookId = await this.bookService.addToBorrowersQueue(
+      currentUserId,
+      bookId,
+    )
+
+    return this.buildBookConfirmationResponse(responseBookId)
+  }
+
   private buildShortBookResponse(
     book: BookEntityWithInFavoritesInterface,
   ): ShortBookItemDto {
@@ -211,17 +228,18 @@ export class BookController {
   }
 
   private buildBookResponse(
-    book: BookEntityWithInFavoritesInterface,
+    book: BookEntityWithBorrowerInterface,
   ): BookItemDto {
     return {
       ...this.buildShortBookResponse(book),
       itemStatus: {
         isBorrowed: book.isBorrowed,
         borrower: {
-          borrowerName: 'book.borrower.name', // TODO: add borrowerName
-          borrowerId: null, // // TODO: add borrowerId
+          name: book.borrowerInfo.name, // TODO: add borrowerName
+          id: book.borrowerInfo.id, // // TODO: add borrowerId
+          avatarId: book.borrowerInfo.avatarId,
         },
-        borrowersQueue: [], // TODO: add borrowersQueue
+        borrowersIdsQueue: book.borrowersIdsQueue, // TODO: add borrowersQueue
       },
     }
   }
