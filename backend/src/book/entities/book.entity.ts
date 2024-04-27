@@ -41,13 +41,19 @@ export class BookEntity {
   @Column('boolean', { default: false })
   isBorrowed: boolean
 
+  @JoinColumn({ name: 'userId' })
+  @OneToOne(() => UserEntity, {
+    nullable: true,
+  })
+  public borrower?: UserEntity
+
   @IsEmpty()
   @Column({ nullable: true })
-  borrower?: number
+  borrowerId?: number
 
   @IsEmpty()
   @Column('int', { array: true, default: [] })
-  borrowersQueue?: number[]
+  borrowersIdsQueue?: number[]
 
   @IsEmpty()
   @Column('int2', { default: 0 })
