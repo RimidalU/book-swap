@@ -27,7 +27,7 @@ import {
 } from '@src/user/dto'
 import { JwtAuthGuard } from '@src/auth/jwt-auth.guard'
 import { ApiTags } from '@nestjs/swagger'
-import { NotAcceptableException } from '@nestjs/common/exceptions/not-acceptable.exception'
+import { NotAcceptableException } from '@nestjs/common/exceptions'
 import {
   GetAllSwaggerDecorator,
   RemoveSwaggerDecorator,

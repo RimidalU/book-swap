@@ -80,4 +80,8 @@ export class UserEntity {
   @ManyToMany(() => UserEntity)
   @JoinTable()
   subscriptions: UserEntity[]
+
+  @ManyToMany(() => BookEntity)
+  @JoinTable()
+  requestedBooks: BookEntity[]
 }

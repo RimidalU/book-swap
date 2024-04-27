@@ -1,6 +1,7 @@
 import { UserType } from '@src/user/types'
 
 export const userItem: UserType = {
+  requestedBooks: [],
   id: 11,
   name: 'User Name',
   bio: 'User Name bio',

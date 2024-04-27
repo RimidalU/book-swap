@@ -1,6 +1,7 @@
 import { ProfileType } from '@src/profile/types'
 
 export const profileItem: ProfileType = {
+  requestedBooks: [],
   id: 11,
   name: 'User Name',
   bio: 'User Name bio',
