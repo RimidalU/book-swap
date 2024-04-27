@@ -11,7 +11,7 @@ import {
   BookNotUpdatedException,
 } from '@src/book/exceptions'
 import {
-  BookEntityWithInFavoritesInterface,
+  BookEntityWithBorrowerInterface,
   QueryInterface,
 } from '@src/book/types'
 import { BooksResponseInterface } from '@src/book/types/books-response.interface'
@@ -139,8 +139,9 @@ export class BookService {
   async getById(
     currentUserId: number,
     id: number,
-  ): Promise<BookEntityWithInFavoritesInterface> {
+  ): Promise<BookEntityWithBorrowerInterface> {
     const book = await this.bookRepository.findOneBy({ id })
+    let borrowerInfo = null
     if (!book) {
       throw new BookNotFoundException(id)
     }
@@ -154,10 +155,20 @@ export class BookService {
       })
       const favoritesUserBookIds = user.favorites.map((book) => book.id)
 
+      const borrower = await this.userRepository.findOne({
+        where: { id: book.borrowerId },
+      })
+
+      borrowerInfo = {
+        id: borrower.id,
+        name: borrower.name,
+        avatarId: borrower.avatarId,
+      }
+
       inFavorites = favoritesUserBookIds.includes(book.id)
     }
 
-    const newBook = { ...book, inFavorites }
+    const newBook = { ...book, inFavorites, borrowerInfo }
     return newBook
   }
 
@@ -314,5 +325,32 @@ export class BookService {
     const newBook = await this.bookRepository.save(book)
 
     return newBook.id
+  }
+
+  async addToBorrowersQueue(
+    currentUserId: number,
+    bookId: number,
+  ): Promise<number> {
+    const book = await this.getOne(bookId)
+    const user = await this.userRepository.findOne({
+      where: { id: currentUserId },
+      relations: ['requestedBooks'],
+    })
+
+    const isNotInBorrowersQueue =
+      book.borrowersIdsQueue.findIndex(
+        (userInQueue) => userInQueue === user.id,
+      ) === -1
+
+    if (isNotInBorrowersQueue) {
+      book.borrowersIdsQueue.push(user.id)
+      user.requestedBooks.push(book)
+
+      await this.bookRepository.save(book)
+      await this.userRepository.save(user)
+
+      return bookId
+    }
+    return bookId
   }
 }
