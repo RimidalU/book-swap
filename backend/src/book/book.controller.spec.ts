@@ -27,6 +27,8 @@ describe('BookController', () => {
             getById: jest.fn().mockReturnValue(bookItem),
             remove: jest.fn().mockReturnValue(bookItem.id),
             update: jest.fn().mockReturnValue(bookItem.id),
+            addToFavorites: jest.fn().mockReturnValue(bookItem.id),
+            removeFromFavorites: jest.fn().mockReturnValue(bookItem.id),
           },
         },
       ],
@@ -132,6 +134,36 @@ describe('BookController', () => {
         currentUserId,
         bookItem.id,
         newBookInfo,
+      )
+    })
+  })
+
+  describe('add to favorites book method', () => {
+    it('check returned book id', async () => {
+      expect(
+        await controller.addToFavorites(currentUserId, bookItem.id),
+      ).toEqual({
+        book: { itemId: bookItem.id },
+      })
+
+      expect(service.addToFavorites).toHaveBeenCalledWith(
+        currentUserId,
+        bookItem.id,
+      )
+    })
+  })
+
+  describe('remove from favorites book method', () => {
+    it('check returned book id', async () => {
+      expect(
+        await controller.removeFromFavorites(currentUserId, bookItem.id),
+      ).toEqual({
+        book: { itemId: bookItem.id },
+      })
+
+      expect(service.removeFromFavorites).toHaveBeenCalledWith(
+        currentUserId,
+        bookItem.id,
       )
     })
   })
