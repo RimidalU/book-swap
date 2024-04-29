@@ -119,6 +119,11 @@ describe('BookService', () => {
     it('the book with correct id should be returned', async () => {
       expect(await service.getById(currentUserId, bookItem.id)).toEqual({
         ...bookItem,
+        borrowerInfo: {
+          avatarId: undefined,
+          id: userItem.id,
+          name: userItem.name,
+        },
         inFavorites: false,
       })
 
