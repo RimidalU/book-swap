@@ -30,6 +30,8 @@ describe('BookController', () => {
             addToFavorites: jest.fn().mockReturnValue(bookItem.id),
             removeFromFavorites: jest.fn().mockReturnValue(bookItem.id),
             addEBook: jest.fn().mockReturnValue(bookItem.id),
+            addToBorrowersQueue: jest.fn().mockReturnValue(bookItem.id),
+            removeFromBorrowersQueue: jest.fn().mockReturnValue(bookItem.id),
           },
         },
       ],
@@ -184,6 +186,36 @@ describe('BookController', () => {
         originalname: fileMock.originalname,
         mimetype: fileMock.mimetype,
       })
+    })
+  })
+
+  describe('add user to borrowers queue method', () => {
+    it('check returned book id', async () => {
+      expect(
+        await controller.addToBorrowersQueue(currentUserId, bookItem.id),
+      ).toEqual({
+        book: { itemId: bookItem.id },
+      })
+
+      expect(service.addToBorrowersQueue).toHaveBeenCalledWith(
+        currentUserId,
+        bookItem.id,
+      )
+    })
+  })
+
+  describe('remove user from borrowers queue method', () => {
+    it('check returned book id', async () => {
+      expect(
+        await controller.removeFromBorrowersQueue(currentUserId, bookItem.id),
+      ).toEqual({
+        book: { itemId: bookItem.id },
+      })
+
+      expect(service.removeFromBorrowersQueue).toHaveBeenCalledWith(
+        currentUserId,
+        bookItem.id,
+      )
     })
   })
 })
