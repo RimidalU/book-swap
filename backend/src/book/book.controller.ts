@@ -251,9 +251,9 @@ export class BookController {
       itemStatus: {
         isBorrowed: book.isBorrowed,
         borrower: {
-          name: book.borrowerInfo.name, // TODO: add borrowerName
-          id: book.borrowerInfo.id, // // TODO: add borrowerId
-          avatarId: book.borrowerInfo.avatarId,
+          name: book.borrowerInfo?.name, // TODO: add borrowerName
+          id: book.borrowerInfo?.id, // // TODO: add borrowerId
+          avatarId: book.borrowerInfo?.avatarId,
         },
         borrowersIdsQueue: book.borrowersIdsQueue,
       },
