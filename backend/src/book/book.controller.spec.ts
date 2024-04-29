@@ -23,7 +23,7 @@ describe('BookController', () => {
           provide: BookService,
           useValue: {
             create: jest.fn().mockReturnValue(bookItem.id),
-            getAll: jest.fn().mockReturnValue([bookItem]),
+            getAll: jest.fn().mockReturnValue({ books: [bookItem], count: 1 }),
             getById: jest.fn().mockReturnValue(bookItem),
             remove: jest.fn().mockReturnValue(bookItem.id),
             update: jest.fn().mockReturnValue(bookItem.id),
@@ -56,21 +56,59 @@ describe('BookController', () => {
     })
   })
 
-  // describe('get all books method', () => {
-  //   it('check returned array of books', async () => {
-  //     expect(await controller.getAll(currentUserId, {})).toEqual([bookItem])
-  //
-  //     expect(service.getAll).toHaveBeenCalledWith()
-  //   })
-  // })
+  describe('get all books method', () => {
+    it('check returned array of books', async () => {
+      expect(await controller.getAll(currentUserId, {})).toEqual({
+        books: [
+          {
+            itemId: bookItem.id,
+            item: {
+              ...newItemInfo,
+              ebookId: undefined,
+              inFavorites: undefined,
+              likes: 0,
+              ownerAvatar: undefined,
+              ownerId: undefined,
+              tags: bookItem.tags,
+            },
+          },
+        ],
+        count: 1,
+      })
 
-  // describe('getById book method', () => {
-  //   it('check returned books with current id', async () => {
-  //     expect(await controller.getById(currentUserId, bookItem.id)).toEqual({book: {itemId: bookItem.id, item: bookItem}})
-  //
-  //     expect(service.getById).toHaveBeenCalledWith(bookItem.id)
-  //   })
-  // })
+      expect(service.getAll).toHaveBeenCalledWith(currentUserId, {})
+    })
+  })
+
+  describe('getById book method', () => {
+    it('check returned books with current id', async () => {
+      expect(await controller.getById(currentUserId, bookItem.id)).toEqual({
+        book: {
+          itemId: bookItem.id,
+          itemStatus: {
+            borrower: {
+              avatarId: undefined,
+              id: undefined,
+              name: undefined,
+            },
+            borrowersIdsQueue: [],
+            isBorrowed: false,
+          },
+          item: {
+            ...newItemInfo,
+            ownerAvatar: undefined,
+            ownerId: undefined,
+            ebookId: undefined,
+            inFavorites: undefined,
+            likes: 0,
+            tags: bookItem.tags,
+          },
+        },
+      })
+
+      expect(service.getById).toHaveBeenCalledWith(bookItem.id, currentUserId)
+    })
+  })
 
   describe('remove book method', () => {
     it('check returned book id', async () => {
