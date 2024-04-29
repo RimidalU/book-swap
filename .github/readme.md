@@ -67,6 +67,7 @@ And many, many other features...
 - Uploading and converting books images to webp.
 - Serve static distribution images.
 - Ability to add an electronic version of the book.
+- Books borrowers queue.
 
 ## How To Use
 
