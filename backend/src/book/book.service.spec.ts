@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm'
 import { DataSource, Repository } from 'typeorm'
 
 import { BookService } from './book.service'
+import { FileService } from '@src/file/file.service'
 
 import { BookEntity } from './entities'
 import { UserEntity } from '@src/user/entities'
@@ -11,10 +12,16 @@ import { bookItem, newItemInfo } from './mocks'
 import { BookNotFoundException } from './exceptions'
 import { userItem } from '@src/user/mocks'
 import { ForbiddenException } from '@nestjs/common'
+import { DatabaseFileEntity } from '@src/file/entities'
+
+class DatabaseFileEntityRepository {}
 
 describe('BookService', () => {
   let service: BookService
   let bookRepository: Repository<BookEntity>
+  let fileRepository: Repository<DatabaseFileEntityRepository>
+  let fileService: FileService
+
   const newBookInfo = {
     description: 'New description',
     year: 1990,
@@ -23,6 +30,7 @@ describe('BookService', () => {
 
   const BOOK_REPOSITORY_TOKEN = getRepositoryToken(BookEntity)
   const USER_REPOSITORY_TOKEN = getRepositoryToken(UserEntity)
+  const DATABASE_FILE_REPOSITORY_TOKEN = getRepositoryToken(DatabaseFileEntity)
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -47,6 +55,11 @@ describe('BookService', () => {
             save: jest.fn().mockReturnValue(userItem.id),
           },
         },
+        FileService,
+        {
+          provide: DATABASE_FILE_REPOSITORY_TOKEN,
+          useValue: {},
+        },
         {
           provide: DataSource,
           useValue: {
@@ -57,7 +70,6 @@ describe('BookService', () => {
                   limit: jest.fn().mockReturnValue([bookItem]),
                   offset: jest.fn().mockReturnValue([bookItem]),
                   getCount: jest.fn().mockReturnValue(0),
-
                   getMany: jest.fn().mockReturnValue([bookItem]),
                 })),
               })),
@@ -68,6 +80,7 @@ describe('BookService', () => {
     }).compile()
 
     service = module.get(BookService)
+    fileService = module.get(FileService)
     bookRepository = module.get(BOOK_REPOSITORY_TOKEN)
   })
 
@@ -77,6 +90,10 @@ describe('BookService', () => {
 
   it('bookRepository should bookRepository be defined', () => {
     expect(bookRepository).toBeDefined()
+  })
+
+  it('fileService should be defined', () => {
+    expect(fileService).toBeDefined()
   })
 
   describe('create book method', () => {
