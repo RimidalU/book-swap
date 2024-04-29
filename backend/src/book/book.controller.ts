@@ -30,6 +30,7 @@ import {
   RemoveFromFavoritesSwaggerDecorator,
   MyFeedSwaggerDecorator,
   AddEbookSwaggerDecorator,
+  RemoveFromBorrowersQueueSwaggerDecorator,
 } from '@src/book/decorators'
 
 import { ShortBookItemDto } from '@src/book/dto'
@@ -206,6 +207,21 @@ export class BookController {
     return this.buildBookConfirmationResponse(responseBookId)
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Delete('borrowersQueue/:id')
+  @RemoveFromBorrowersQueueSwaggerDecorator()
+  async removeFromBorrowersQueue(
+    @UserInfo('id') currentUserId: number,
+    @Param('id', ParseIntPipe) bookId: number,
+  ): Promise<BookConfirmationResponseDto> {
+    const responseBookId = await this.bookService.removeFromBorrowersQueue(
+      currentUserId,
+      bookId,
+    )
+
+    return this.buildBookConfirmationResponse(responseBookId)
+  }
+
   private buildShortBookResponse(
     book: BookEntityWithInFavoritesInterface,
   ): ShortBookItemDto {
@@ -239,7 +255,7 @@ export class BookController {
           id: book.borrowerInfo.id, // // TODO: add borrowerId
           avatarId: book.borrowerInfo.avatarId,
         },
-        borrowersIdsQueue: book.borrowersIdsQueue, // TODO: add borrowersQueue
+        borrowersIdsQueue: book.borrowersIdsQueue,
       },
     }
   }
