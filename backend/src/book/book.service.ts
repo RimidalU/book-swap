@@ -337,6 +337,8 @@ export class BookService {
       relations: ['requestedBooks'],
     })
 
+    console.log(user.requestedBooks)
+
     const isNotInBorrowersQueue =
       book.borrowersIdsQueue.findIndex(
         (userInQueue) => userInQueue === user.id,
@@ -350,6 +352,38 @@ export class BookService {
       await this.userRepository.save(user)
 
       return bookId
+    }
+    return bookId
+  }
+
+  async removeFromBorrowersQueue(
+    currentUserId: number,
+    bookId: number,
+  ): Promise<number> {
+    const book = await this.getOne(bookId)
+    const user = await this.userRepository.findOne({
+      where: { id: currentUserId },
+      relations: ['requestedBooks'],
+    })
+
+    console.log(user.requestedBooks)
+
+    const inBorrowersQueueIndex = book.borrowersIdsQueue.findIndex(
+      (userInQueue) => userInQueue === user.id,
+    )
+
+    const inRequestedBooksIndex = user.requestedBooks.findIndex(
+      (requestedBook) => requestedBook.id === book.id,
+    )
+
+    if (inBorrowersQueueIndex !== -1) {
+      book.borrowersIdsQueue.splice(inBorrowersQueueIndex, 1)
+      await this.bookRepository.save(book)
+    }
+
+    if (inRequestedBooksIndex !== -1) {
+      user.requestedBooks.splice(inRequestedBooksIndex, 1)
+      await this.userRepository.save(user)
     }
     return bookId
   }
