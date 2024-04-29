@@ -337,8 +337,6 @@ export class BookService {
       relations: ['requestedBooks'],
     })
 
-    console.log(user.requestedBooks)
-
     const isNotInBorrowersQueue =
       book.borrowersIdsQueue.findIndex(
         (userInQueue) => userInQueue === user.id,
@@ -365,8 +363,6 @@ export class BookService {
       where: { id: currentUserId },
       relations: ['requestedBooks'],
     })
-
-    console.log(user.requestedBooks)
 
     const inBorrowersQueueIndex = book.borrowersIdsQueue.findIndex(
       (userInQueue) => userInQueue === user.id,
