@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { BookController } from './book.controller'
 import { BookService } from './book.service'
 
-import { bookItem, newItemInfo } from './mocks'
+import { bookItem, fileMock, newItemInfo } from './mocks'
 import { userItem } from '@src/user/mocks'
 
 describe('BookController', () => {
@@ -29,6 +29,7 @@ describe('BookController', () => {
             update: jest.fn().mockReturnValue(bookItem.id),
             addToFavorites: jest.fn().mockReturnValue(bookItem.id),
             removeFromFavorites: jest.fn().mockReturnValue(bookItem.id),
+            addEBook: jest.fn().mockReturnValue(bookItem.id),
           },
         },
       ],
@@ -165,6 +166,24 @@ describe('BookController', () => {
         currentUserId,
         bookItem.id,
       )
+    })
+  })
+
+  describe('add add E-book method', () => {
+    it('check returned book id', async () => {
+      expect(
+        await controller.addEBook(currentUserId, bookItem.id, fileMock),
+      ).toEqual({
+        book: { itemId: bookItem.id },
+      })
+
+      expect(service.addEBook).toHaveBeenCalledWith({
+        bookId: bookItem.id,
+        currentUserId,
+        data: fileMock.buffer,
+        originalname: fileMock.originalname,
+        mimetype: fileMock.mimetype,
+      })
     })
   })
 })
