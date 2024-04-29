@@ -19,6 +19,7 @@ class DatabaseFileEntityRepository {}
 describe('BookService', () => {
   let service: BookService
   let bookRepository: Repository<BookEntity>
+  let userRepository: Repository<UserEntity>
   let fileRepository: Repository<DatabaseFileEntityRepository>
   let fileService: FileService
 
@@ -82,6 +83,7 @@ describe('BookService', () => {
     service = module.get(BookService)
     fileService = module.get(FileService)
     bookRepository = module.get(BOOK_REPOSITORY_TOKEN)
+    userRepository = module.get(USER_REPOSITORY_TOKEN)
   })
 
   it('service should be defined', () => {
@@ -260,6 +262,72 @@ describe('BookService', () => {
 
       await expect(
         service.removeFromFavorites(currentUserId, bookItem.id),
+      ).rejects.toThrowError(BookNotFoundException)
+    })
+  })
+
+  describe('addToBorrowersQueue method', () => {
+    it('addToBorrowersQueue method should be returned book id', async () => {
+      expect(
+        await service.addToBorrowersQueue(currentUserId, bookItem.id),
+      ).toEqual(bookItem.id)
+
+      expect(await bookRepository.findOneBy).toHaveBeenCalledWith({
+        id: bookItem.id,
+      })
+      expect(await userRepository.findOne).toHaveBeenCalledWith({
+        where: { id: currentUserId },
+        relations: ['requestedBooks'],
+      })
+
+      expect(bookRepository.save).toHaveBeenCalledWith(bookItem)
+      expect(userRepository.save).toHaveBeenCalledWith(userItem)
+
+      expect(bookItem.borrowersIdsQueue).toContain(currentUserId)
+      expect(userItem.requestedBooks).toContain(bookItem)
+    })
+
+    it('addToBorrowersQueue with wrong book id should throw an exception', async () => {
+      bookRepository.findOneBy = jest.fn().mockReturnValue(undefined)
+
+      await expect(
+        service.addToBorrowersQueue(currentUserId, bookItem.id),
+      ).rejects.toThrowError(BookNotFoundException)
+    })
+  })
+
+  describe('removeFromBorrowersQueue method', () => {
+    it('removeFromBorrowersQueue method should be returned book id', async () => {
+      bookRepository.findOneBy = jest.fn().mockReturnValue({ ...bookItem })
+
+      await service.addToBorrowersQueue(currentUserId, bookItem.id)
+      expect(bookItem.borrowersIdsQueue).toContain(currentUserId)
+      expect(userItem.requestedBooks).toContain(bookItem)
+
+      expect(
+        await service.removeFromBorrowersQueue(currentUserId, bookItem.id),
+      ).toEqual(bookItem.id)
+
+      expect(await bookRepository.findOneBy).toHaveBeenCalledWith({
+        id: bookItem.id,
+      })
+      expect(await userRepository.findOne).toHaveBeenCalledWith({
+        where: { id: currentUserId },
+        relations: ['requestedBooks'],
+      })
+
+      expect(bookRepository.save).toHaveBeenCalledWith(bookItem)
+      expect(userRepository.save).toHaveBeenCalledWith(userItem)
+
+      expect(bookItem.borrowersIdsQueue).toEqual([])
+      expect(userItem.requestedBooks).toEqual([])
+    })
+
+    it('removeFromBorrowersQueue with wrong book id should throw an exception', async () => {
+      bookRepository.findOneBy = jest.fn().mockReturnValue(undefined)
+
+      await expect(
+        service.removeFromBorrowersQueue(currentUserId, bookItem.id),
       ).rejects.toThrowError(BookNotFoundException)
     })
   })
