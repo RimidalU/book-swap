@@ -11,17 +11,17 @@ import {
 
 import { BookConfirmationResponseDto } from '@src/book/dto'
 
-export function AddToBorrowersQueueSwaggerDecorator() {
+export function UpdateBorrowerSwaggerDecorator() {
   return applyDecorators(
     ApiBearerAuth(),
 
-    ApiOperation({ summary: 'Add User to borrowers queue' }),
+    ApiOperation({ summary: 'Update book Borrower' }),
     ApiNotFoundResponse({ description: 'Not Found' }),
     ApiUnauthorizedResponse({ description: 'Unauthorized' }),
     ApiNotAcceptableResponse({ description: 'Not Acceptable' }),
     ApiResponse({
       status: 200,
-      description: 'User added to  borrowers queue',
+      description: 'Book Borrower added',
       type: BookConfirmationResponseDto,
     }),
   )

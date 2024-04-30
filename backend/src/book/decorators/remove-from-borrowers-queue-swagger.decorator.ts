@@ -15,13 +15,13 @@ export function RemoveFromBorrowersQueueSwaggerDecorator() {
   return applyDecorators(
     ApiBearerAuth(),
 
-    ApiOperation({ summary: 'Remove Book from borrowers queue' }),
+    ApiOperation({ summary: 'Remove User from borrowers queue' }),
     ApiNotFoundResponse({ description: 'Not Found' }),
     ApiUnauthorizedResponse({ description: 'Unauthorized' }),
     ApiNotAcceptableResponse({ description: 'Not Acceptable' }),
     ApiResponse({
       status: 200,
-      description: 'Book removed from borrowers queue',
+      description: 'User removed from borrowers queue',
       type: BookConfirmationResponseDto,
     }),
   )

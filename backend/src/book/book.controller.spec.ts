@@ -32,6 +32,7 @@ describe('BookController', () => {
             addEBook: jest.fn().mockReturnValue(bookItem.id),
             addToBorrowersQueue: jest.fn().mockReturnValue(bookItem.id),
             removeFromBorrowersQueue: jest.fn().mockReturnValue(bookItem.id),
+            updateBorrower: jest.fn().mockReturnValue(bookItem.id),
           },
         },
       ],
@@ -215,6 +216,26 @@ describe('BookController', () => {
       expect(service.removeFromBorrowersQueue).toHaveBeenCalledWith(
         currentUserId,
         bookItem.id,
+      )
+    })
+  })
+
+  describe('add user to book borrower method', () => {
+    const newBorrowerId = 111
+
+    it('check returned book id', async () => {
+      expect(
+        await controller.updateBorrower(currentUserId, bookItem.id, {
+          borrowerId: newBorrowerId,
+        }),
+      ).toEqual({
+        book: { itemId: bookItem.id },
+      })
+
+      expect(service.updateBorrower).toHaveBeenCalledWith(
+        currentUserId,
+        bookItem.id,
+        newBorrowerId,
       )
     })
   })
