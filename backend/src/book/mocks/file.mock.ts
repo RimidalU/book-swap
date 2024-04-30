@@ -9,3 +9,11 @@ export const fileMock = {
   filename: 'file-name',
   destination: 'destination-path',
 } as Express.Multer.File
+
+export const dbFileMock = {
+  id: 33,
+  name: 'file.jpeg',
+  url: '/file.jpeg',
+  mimetype: 'image/jpeg',
+  data: Buffer.from('Buffer'),
+}

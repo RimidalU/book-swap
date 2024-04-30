@@ -8,19 +8,16 @@ import { FileService } from '@src/file/file.service'
 import { BookEntity } from './entities'
 import { UserEntity } from '@src/user/entities'
 
-import { bookItem, newItemInfo } from './mocks'
-import { BookNotFoundException } from './exceptions'
+import { bookItem, dbFileMock, fileMock, newItemInfo } from './mocks'
+import { BookNotFoundException, BookNotUpdatedException } from './exceptions'
 import { userItem } from '@src/user/mocks'
 import { ForbiddenException } from '@nestjs/common'
 import { DatabaseFileEntity } from '@src/file/entities'
-
-class DatabaseFileEntityRepository {}
 
 describe('BookService', () => {
   let service: BookService
   let bookRepository: Repository<BookEntity>
   let userRepository: Repository<UserEntity>
-  let fileRepository: Repository<DatabaseFileEntityRepository>
   let fileService: FileService
 
   const newBookInfo = {
@@ -59,7 +56,9 @@ describe('BookService', () => {
         FileService,
         {
           provide: DATABASE_FILE_REPOSITORY_TOKEN,
-          useValue: {},
+          useValue: {
+            save: jest.fn().mockReturnValue(dbFileMock),
+          },
         },
         {
           provide: DataSource,
@@ -329,6 +328,47 @@ describe('BookService', () => {
       await expect(
         service.removeFromBorrowersQueue(currentUserId, bookItem.id),
       ).rejects.toThrowError(BookNotFoundException)
+    })
+  })
+
+  describe('addEBook method', () => {
+    const eBookInfo = {
+      currentUserId,
+      bookId: bookItem.id,
+      data: fileMock.buffer,
+      originalname: fileMock.originalname,
+      mimetype: fileMock.mimetype,
+    }
+
+    it('addEBook method should be returned book id', async () => {
+      bookItem.owner.id = currentUserId
+      bookRepository.findOneBy = jest.fn().mockReturnValue(bookItem)
+      expect(await service.addEBook(eBookInfo)).toEqual(bookItem.id)
+
+      expect(await bookRepository.findOneBy).toHaveBeenCalledWith({
+        id: bookItem.id,
+      })
+
+      expect(bookRepository.save).toHaveBeenCalledWith({
+        ...bookItem,
+      })
+    })
+
+    it('addEBook with wrong book id should throw an exception', async () => {
+      bookRepository.findOneBy = jest.fn().mockReturnValue(undefined)
+
+      await expect(service.addEBook(eBookInfo)).rejects.toThrowError(
+        BookNotFoundException,
+      )
+    })
+
+    it('addEBook if the user is not the owner should throw an exception', async () => {
+      bookItem.owner.id = currentUserId + 1
+      bookRepository.findOneBy = jest.fn().mockReturnValue(bookItem)
+
+      await expect(service.addEBook(eBookInfo)).rejects.toThrowError(
+        BookNotUpdatedException,
+      )
     })
   })
 })
