@@ -383,4 +383,41 @@ export class BookService {
     }
     return bookId
   }
+
+  async updateBorrower(
+    currentUserId: number,
+    bookId: number,
+    borrowerId: number | null,
+  ): Promise<number> {
+    const book = await this.getOne(bookId)
+
+    if (book.owner.id !== currentUserId) {
+      throw new BookNotUpdatedException(book.id)
+    }
+
+    if (!borrowerId) {
+      book.borrower = null
+      book.borrowerId = null
+
+      await this.bookRepository.save(book)
+    } else {
+      const user = await this.userRepository.findOne({
+        where: { id: borrowerId },
+        relations: ['requestedBooks'],
+      })
+
+      book.borrower = user
+      book.borrowerId = user.id
+      book.borrowersIdsQueue = book.borrowersIdsQueue.filter(
+        (borrowerInQueueId) => borrowerInQueueId !== user.id,
+      )
+      user.requestedBooks = user.requestedBooks.filter(
+        (requestedBook) => requestedBook.id !== book.id,
+      )
+
+      await this.bookRepository.save(book)
+      await this.userRepository.save(user)
+    }
+    return bookId
+  }
 }
