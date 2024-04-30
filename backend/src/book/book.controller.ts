@@ -31,9 +31,10 @@ import {
   MyFeedSwaggerDecorator,
   AddEbookSwaggerDecorator,
   RemoveFromBorrowersQueueSwaggerDecorator,
+  UpdateBorrowerSwaggerDecorator,
 } from '@src/book/decorators'
 
-import { ShortBookItemDto } from '@src/book/dto'
+import { ShortBookItemDto, UpdateBorrowerDto } from '@src/book/dto'
 import {
   BookEntityWithBorrowerInterface,
   BookEntityWithInFavoritesInterface,
@@ -222,6 +223,23 @@ export class BookController {
     return this.buildBookConfirmationResponse(responseBookId)
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Patch('borrower/:id')
+  @UpdateBorrowerSwaggerDecorator()
+  async updateBorrower(
+    @UserInfo('id') currentUserId: number,
+    @Param('id', ParseIntPipe) bookId: number,
+    @Body() payload: UpdateBorrowerDto,
+  ): Promise<BookConfirmationResponseDto> {
+    const responseBookId = await this.bookService.updateBorrower(
+      currentUserId,
+      bookId,
+      payload.borrowerId,
+    )
+
+    return this.buildBookConfirmationResponse(responseBookId)
+  }
+
   private buildShortBookResponse(
     book: BookEntityWithInFavoritesInterface,
   ): ShortBookItemDto {
@@ -251,8 +269,8 @@ export class BookController {
       itemStatus: {
         isBorrowed: book.isBorrowed,
         borrower: {
-          name: book.borrowerInfo?.name, // TODO: add borrowerName
-          id: book.borrowerInfo?.id, // // TODO: add borrowerId
+          name: book.borrowerInfo?.name,
+          id: book.borrowerInfo?.id,
           avatarId: book.borrowerInfo?.avatarId,
         },
         borrowersIdsQueue: book.borrowersIdsQueue,
