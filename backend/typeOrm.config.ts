@@ -15,5 +15,5 @@ export default new DataSource(  {
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
   migrations: [__dirname + 'src/database/migrations/**/*{.ts,js}'],
   useUTC: true,
-  ssl: process.env.NODE_ENV === 'prod',
+  ssl: process.env.SSL === 'prod',
 })
