@@ -8,6 +8,8 @@
 ![license](https://img.shields.io/github/license/RimidalU/book-swap)
 ![GitHub repo size](https://img.shields.io/github/repo-size/RimidalU/book-swap)
 
+[![Link to Book Swap Server](https://img.shields.io/badge/Visit_the_Book_Swap_server-Click_Here-black?style=plastic&logo=link&logoColor=black&labelColor=white&color=black&link=https://book-swap-0ph3.onrender.com/docs)](https://book-swap-0ph3.onrender.com/docs)
+
 ---
 
 [Technologies](#technologies) •
@@ -34,6 +36,7 @@
 ![Zod](https://img.shields.io/badge/Zod-3E67B1.svg?style=for-the-badge&logo=Zod&logoColor=white)
 ![Docker](https://img.shields.io/badge/-Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Sharp](https://img.shields.io/badge/sharp-99CC00.svg?style=for-the-badge&logo=sharp&logoColor=white)
+![Render](https://img.shields.io/badge/Render-%46E3B7.svg?style=for-the-badge&logo=render&logoColor=white)
 
 [//]: # (<img src="./assets/home.png" width="600" />)
 
@@ -50,6 +53,10 @@ The functionality also includes registration, authorization of users, assignment
 And many, many other features...
 
 ## Project setup
+
+ ***The swagger of the project's backend is [here](https://book-swap-0ph3.onrender.com/docs).***
+
+Or run locally:
 
 - Clone this repo to your desktop and run `yarn` or `npm install` to install all the dependencies.
 - Once the dependencies are installed, you can run `yarn dev` or `npm dev` to start the application.
