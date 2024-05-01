@@ -16,5 +16,6 @@ export const getTypeormModuleConfig = async (
     synchronize: false,
     autoLoadEntities: true,
     useUTC: true,
+    ssl: process.env.NODE_ENV === 'prod',
   }
 }

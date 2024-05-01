@@ -2,7 +2,7 @@ import { config } from 'dotenv'
 import { DataSource } from 'typeorm'
 
 config({
-  path: '../.env',
+  path: '../.env.dev',
 });
 
 export default new DataSource(  {
@@ -14,5 +14,6 @@ export default new DataSource(  {
   host:  process.env.TYPEORM_HOST,
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
   migrations: [__dirname + 'src/database/migrations/**/*{.ts,js}'],
-  useUTC: true
+  useUTC: true,
+  ssl: process.env.NODE_ENV === 'prod',
 })
