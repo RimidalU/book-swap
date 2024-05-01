@@ -5,6 +5,6 @@ export const getConfigModuleConfig = (): ConfigModuleOptions => {
   return {
     isGlobal: true,
     validate: (env) => envSchema.parse(env),
-    envFilePath: '../.env',
+    envFilePath: `../.env.${process.env.NODE_ENV || 'dev'}`,
   }
 }
