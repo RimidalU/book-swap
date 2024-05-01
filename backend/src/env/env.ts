@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const envSchema = z.object({
-  SSL: z.coerce.boolean(),
+  SSL: z.coerce.string(),
   API_PORT: z.coerce.number().optional().default(3000),
   API_HOST: z.coerce.string().min(1).optional().default('http://localhost:'),
   TYPEORM_CONNECTION: z.coerce.string().min(3),
