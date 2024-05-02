@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=bookuser
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_DB=bookswap
+    volumes:
+      - db-data:/var/lib/postgresql/data
+volumes:
+  db-data:
