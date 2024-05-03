@@ -7,7 +7,6 @@ import {
   Param,
   ParseFilePipeBuilder,
   ParseIntPipe,
-  Patch,
   Post,
   Query,
   UploadedFile,
@@ -184,7 +183,7 @@ export class BookController {
   ): Promise<BookConfirmationResponseDto> {
     await this.bookService.addEBook({
       currentUserId,
-      bookId,
+      bookId: "bookId",
       data: file.buffer,
       originalname: file.originalname,
       mimetype: file.mimetype,
