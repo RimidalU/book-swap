@@ -8,7 +8,6 @@ import {
   ParseFilePipeBuilder,
   ParseIntPipe,
   Post,
-  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
