@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npm ci
-      - run: npm run format:verify
-      - run: npm run lint:verify
-      - run: npm run lint:types
-      - run: npm run test
+      - run: yarn ci
+      - run: yarn run format:verify
+      - run: yarn run lint:verify
+      - run: yarn run lint:types
+      - run: yarn run test
