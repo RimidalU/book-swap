@@ -3,14 +3,15 @@ name: Pull requests check
 on:
   pull_request:
 
+defaults:
+  run:
+    working-directory: ./backend
+
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repository
       - uses: actions/checkout@v4
-
-      - name: Change version node
       - uses: actions/setup-node@v3
         with:
           node-version: 20.x.x
